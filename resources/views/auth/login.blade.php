@@ -28,7 +28,7 @@
                 <div class="flex items-center space-x-4">
                     <img src="{{ asset('assets/images/icon.png') }}" alt="SMK Amaliah" class="w-16 h-16">  <!-- School logo smaller -->
                     <div>
-                        <h1 class="text-2xl font-bold">SMK Amaliah 1&2 Ciawi</h1>
+                        <h1 class="text-2xl font-serif">SMK Amaliah 1 & 2 Ciawi</h1>
                         <p class="text-sm italic text-left">Tauhid is Our Fundament</p>
                     </div>
                 </div>
