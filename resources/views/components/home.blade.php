@@ -19,6 +19,10 @@
         </div>
     </div>
 
+    <div class="">
+        {{ $slot }}
+    </div>
+
     <!-- Footer Logos -->
     <div class="flex justify-center space-x-4 py-6">
         <img src="{{ asset('assets/images/LOGO-ANIMASI-01-500x500.png') }}" alt="AN" class="h-10">

@@ -20,30 +20,28 @@
   <!-- Header Section -->
   <x-header>{{ $title }}</x-header>
 
-  <!-- Main Content -->
-  <div class="wrapper">
-    <main class="flex-grow">
-        <div class="mx-auto max-w-7xl py-6 sm:px-6 lg:px-8">
-          {{$slot}}
-        </div>
-      </main>
-    <div class="box">
-        
-       <div></div>
-       <div></div>
-       <div></div>
-       <div></div>
-       <div></div>
-       <div></div>
-       <div></div>
-       <div></div>
-       <div></div>
-       <div></div>
-    </div>
-</div>
-  
+  <!-- Background Wrapper -->
+  <div class="wrapper"></div>
 
-  <!-- Footer -->
- 
+  <!-- Main Content -->
+  <main class="flex-grow">
+      <div class="mx-auto max-w-7xl py-6 sm:px-6 lg:px-8">
+        {{$slot}}
+      </div>
+  </main>
+
+  <!-- Floating Animations -->
+  <div class="box">
+      <div></div>
+      <div></div>
+      <div></div>
+      <div></div>
+      <div></div>
+      <div></div>
+      <div></div>
+      <div></div>
+      <div></div>
+      <div></div>
+  </div>
 </body>
 </html>

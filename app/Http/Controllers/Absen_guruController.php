@@ -22,18 +22,30 @@ class Absen_guruController extends Controller
         return view('guru.absen_guru.index', compact('absen_guru', 'kelas'), ['title' => 'Absensi Guru']);
     }
 
-    public function absen_guruByClass($id)
+    public function absen_guruByClass(Request $request, $id)
     {
-        $absen_guru = Absen_guru::where('kelas_id', $id)->get();
         $kelas = Kelas::find($id);
 
-        // Ambil role pengguna yang sedang login
+        // Retrieve the user's role
         $userRole = auth()->user()->role;
 
-        // Tentukan title berdasarkan role pengguna
-        $title = $userRole === 'Guru' ? 'Absensi' : 'Tugas';
+        // Set the title based on the user's role
+        $title = ($userRole === 'Guru' || $userRole === 'Admin') ? 'Absensi' : 'Tugas';
 
-        return view('guru.absen_guru.absen_guru_kelas.index', compact('absen_guru', 'kelas'), ['title' => $title . ' di Kelas ' . $kelas->kelas_id]);
+        // Check for date filter
+        $filterDate = $request->query('date');
+
+        // Fetch attendance records for the class, optionally filtering by date and ordering by the latest date
+        $absenGuruQuery = Absen_guru::where('kelas_id', $id)
+            ->orderBy('tgl', 'desc');
+
+        if ($filterDate) {
+            $absenGuruQuery->whereDate('tgl', $filterDate);
+        }
+
+        $absen_guru = $absenGuruQuery->get();
+
+        return view('guru.absen_guru.absen_guru_kelas.index', compact('absen_guru', 'kelas', 'filterDate'), ['title' => $title . ' di Kelas ' . $kelas->kelas_id]);
     }
 
     /**

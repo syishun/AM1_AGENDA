@@ -15,6 +15,20 @@
                                 <a href="{{ url('kelas') }}" class="rounded-md px-3 py-2 text-sm font-medium {{ Request::is('kelas') || Request::is('kelas/create') || Request::is('kelas/*/edit') ? 'bg-green-500 text-white' : 'text-gray-300 hover:bg-green-500 hover:text-white' }}">Kelas</a>
                                 <a href="{{ url('data_siswa') }}" class="rounded-md px-3 py-2 text-sm font-medium {{ Request::is('data_siswa') || Request::is('data_siswa/create') || Request::is('data_siswa/*/edit') ? 'bg-green-500 text-white' : 'text-gray-300 hover:bg-green-500 hover:text-white' }}">Siswa</a>
                                 <a href="{{ url('user') }}" class="rounded-md px-3 py-2 text-sm font-medium {{ Request::is('user') || Request::is('user/create') || Request::is('user/*/edit') ? 'bg-green-500 text-white' : 'text-gray-300 hover:bg-green-500 hover:text-white' }}">User</a>
+                                <div class="relative inline-block text-left">
+                                    <button class="rounded-md px-3 py-2 text-sm font-medium {{ Request::is('agenda') || Request::is('agenda/kelas/*') || Request::is('absen_guru') || Request::is('absen_guru/kelas/*') || Request::is('absen_siswa.admin_index') ? 'bg-green-500 text-white' : 'text-gray-300 hover:bg-green-500 hover:text-white' }}" id="dropdownMenuButton">
+                                        Lainnya
+                                        <svg class="ml-1 h-5 w-5 inline-block" fill="currentColor" viewBox="0 0 20 20">
+                                            <path d="M5.25 6.25L10 10.75L14.75 6.25H5.25Z"></path>
+                                        </svg>
+                                    </button>
+                                    <!-- Dropdown Content -->
+                                    <div class="absolute hidden mt-2 w-48 bg-white shadow-lg rounded-md z-50" id="dropdownMenuContent">
+                                        <a href="{{ url('agenda') }}" class="block px-4 py-2 text-sm {{ Request::is('agenda') || Request::is('agenda/kelas/*') ? 'bg-green-500 text-white' : 'text-gray-700 hover:bg-green-100 hover:text-gray-900' }}">Agenda</a>
+                                        <a href="{{ url('absen_guru') }}" class="block px-4 py-2 text-sm {{ Request::is('absen_guru') || Request::is('absen_guru/kelas/*') ? 'bg-green-500 text-white' : 'text-gray-700 hover:bg-green-100 hover:text-gray-900' }}">Absensi Guru</a>
+                                        <a href="{{ url('absen_siswa.admin_index') }}" class="block px-4 py-2 text-sm {{ Request::is('absen_siswa.admin_index') ? 'bg-green-500 text-white' : 'text-gray-700 hover:bg-green-100 hover:text-gray-900' }}">Absensi Siswa</a>
+                                    </div>
+                                </div>
         
                             <!-- Guru Navigation -->
                             @elseif (Auth::user()->role == 'Guru')
@@ -85,7 +99,7 @@
                                 class="absolute right-0 z-10 mt-2 w-48 origin-top-right rounded-md bg-white py-1 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none" role="menu" aria-orientation="vertical" aria-labelledby="user-menu-button" tabindex="-1">
                                 <form method="POST" action="{{ route('logout') }}">
                                     @csrf
-                                    <button type="submit" class="block px-4 py-2 text-sm text-gray-700" role="menuitem" tabindex="-1" id="user-menu-item-2">Sign out</button>
+                                    <button type="submit" class="block px-4 py-2 text-sm text-gray-700" role="menuitem" tabindex="-1" id="user-menu-item-2">Log out</button>
                                 </form>
                             </div>
                         </div>
@@ -115,6 +129,17 @@
                     <a href="{{ url('mapel') }}" class="block rounded-md px-3 py-2 text-base font-medium {{ Request::is('mapel') || Request::is('mapel/create') || Request::is('mapel/*/edit') ? 'text-white bg-green-500' : 'text-gray-300 hover:bg-green-500 hover:text-white' }}">Mapel</a>
                     <a href="{{ url('kelas') }}" class="block rounded-md px-3 py-2 text-base font-medium {{ Request::is('kelas') || Request::is('kelas/create') || Request::is('kelas/*/edit') ? 'text-white bg-green-500' : 'text-gray-300 hover:bg-green-500 hover:text-white' }}">Kelas</a>
                     <a href="{{ url('data_siswa') }}" class="block rounded-md px-3 py-2 text-base font-medium {{ Request::is('data_siswa') || Request::is('data_siswa/create') || Request::is('data_siswa/*/edit') ? 'text-white bg-green-500' : 'text-gray-300 hover:bg-green-500 hover:text-white' }}">Siswa</a>
+                    <div class="relative">
+                        <button onclick="toggleDropdown()" class="w-full text-left block rounded-md px-3 py-2 text-base font-medium {{ Request::is('agenda') || Request::is('agenda/kelas/*') || Request::is('absen_guru') || Request::is('absen_guru/kelas/*') || Request::is('absen_siswa.admin_index') ? 'text-white bg-green-500' : 'text-gray-300 hover:bg-green-500 hover:text-white' }}">
+                            Lainnya
+                        </button>
+                        <!-- Dropdown Content -->
+                        <div id="dropdownContent" class="hidden mt-1 space-y-1 bg-white rounded-md">
+                            <a href="{{ url('agenda') }}" class="block px-4 py-2 text-sm {{ Request::is('agenda') || Request::is('agenda/kelas/*') ? 'bg-green-500 text-white'  : 'text-gray-700 hover:bg-green-500 hover:text-white'  }}">Agenda</a>
+                            <a href="{{ url('absen_guru') }}" class="block px-4 py-2 text-sm {{ Request::is('absen_guru') || Request::is('absen_guru/kelas/*') ? 'bg-green-500 text-white'  : 'text-gray-700 hover:bg-green-500 hover:text-white'  }}">Absensi Guru</a>
+                            <a href="{{ url('absen_siswa.admin_index') }}" class="block px-4 py-2 text-sm {{ Request::is('absen_siswa.admin_index') ? 'bg-green-500 text-white'  : 'text-gray-700 hover:bg-green-500 hover:text-white'  }}">Absensi Siswa</a>
+                        </div>
+                    </div>
                 <!-- Guru -->
                 @elseif (Auth::user()->role == 'Guru')
                     <a href="{{ url('guru') }}" class="block rounded-md px-3 py-2 text-base font-medium {{ Request::is('guru') ? 'text-white bg-green-500' : 'text-gray-300 hover:bg-green-500 hover:text-white' }}" aria-current="page">Beranda</a>
@@ -187,7 +212,7 @@
                 <div class="mt-3 space-y-1 px-2">
                     <form method="POST" action="{{ route('logout') }}">
                         @csrf
-                        <button type="submit" class="block rounded-md px-3 py-2 text-base font-medium text-gray-400 hover:bg-green-500 hover:text-white">Sign out</button>
+                        <button type="submit" class="block rounded-md px-3 py-2 text-base font-medium text-gray-400 hover:bg-green-500 hover:text-white">Log out</button>
                     </form>
                 </div>
             </div>
@@ -208,6 +233,14 @@
                     alert("Gagal menghapus notifikasi");
                 }
             });
+        }
+
+        // Tampilkan/ Sembunyikan Dropdown
+        document.getElementById('dropdownMenuButton').addEventListener('click', function() {
+            document.getElementById('dropdownMenuContent').classList.toggle('hidden');
+        });
+        function toggleDropdown() {
+            document.getElementById("dropdownContent").classList.toggle("hidden");
         }
     </script>
     

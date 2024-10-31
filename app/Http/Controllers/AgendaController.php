@@ -19,11 +19,25 @@ class AgendaController extends Controller
         return view('guru.agenda.index', compact('agenda', 'kelas'), ['title' => 'Agenda Pembelajaran Harian']);
     }
 
-    public function agendaByClass($id)
+    public function agendaByClass(Request $request, $id)
     {
-        $agenda = Agenda::where('kelas_id', $id)->get();
+        // Fetch class details
         $kelas = Kelas::find($id);
-        return view('guru.agenda.agenda_kelas.index', compact('agenda', 'kelas'), ['title' => 'Agenda Harian Kelas ' . $kelas->kelas_id]);
+
+        // Check for date filter
+        $filterDate = $request->query('date');
+
+        // Fetch agenda items for the class, optionally filtering by date and ordering by the latest date
+        $agendaQuery = Agenda::where('kelas_id', $id)
+            ->orderBy('tgl', 'desc');
+
+        if ($filterDate) {
+            $agendaQuery->whereDate('tgl', $filterDate);
+        }
+
+        $agenda = $agendaQuery->get();
+
+        return view('guru.agenda.agenda_kelas.index', compact('agenda', 'kelas', 'filterDate'), ['title' => 'Agenda Harian Kelas ' . $kelas->kelas_id]);
     }
 
     /**
