@@ -22,7 +22,7 @@
 
     <!-- Content Area Centered -->
     <div class="relative z-10 flex-grow flex items-center justify-center">
-        <div class="bg-white bg-opacity-15 backdrop-blur-sm rounded-lg p-6 w-120 mx-auto text-center text-white py-12">
+        <div class="bg-white bg-opacity-15 backdrop-blur-sm rounded-lg p-6 w-120 mx-auto text-center text-white py-12 border">
             <!-- School Logo Flex Layout -->
             <div class="flex flex-col items-center justify-center mb-6">
                 <div class="flex items-center space-x-4">
@@ -60,7 +60,11 @@
                     @error('password')
                         <p class="mt-2 text-sm text-red-600 text-left">{{ $message }}</p>
                     @enderror
-                </div>                
+                </div>  
+                <div class="flex items-center">
+                    <input type="checkbox" name="remember" id="remember" class="mr-2">
+                    <label for="remember" class="text-sm">Ingat Saya</label>
+                </div>              
 
                 <!-- Submit Button -->
                 <button type="submit" class="w-full bg-green-500 text-white py-2 px-4 rounded-md hover:bg-green-600 transition">Login</button>

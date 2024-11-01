@@ -21,18 +21,20 @@ class AuthController extends Controller
             'password' => ['required'],
         ]);
 
-        if (Auth::attempt($credentials)) {
+        $remember = $request->has('remember'); // Check if "Remember Me" is selected
+
+        if (Auth::attempt($credentials, $remember)) {
             $request->session()->regenerate();
 
             // Redirect based on the user's role
             $user = Auth::user();
             switch ($user->role) {
                 case 'Admin':
-                    return redirect()->route('admin.index'); // Change route accordingly
+                    return redirect()->route('admin.index');
                 case 'Guru':
-                    return redirect()->route('guru.index'); // Change route accordingly
+                    return redirect()->route('guru.index');
                 case 'Perwakilan Kelas':
-                    return redirect()->route('siswa.index'); // Change route accordingly
+                    return redirect()->route('siswa.index');
                 default:
                     return redirect('/');
             }
