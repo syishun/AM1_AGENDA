@@ -22,7 +22,7 @@
 
     <!-- Content Area Centered -->
     <div class="relative z-10 flex-grow flex items-center justify-center">
-        <div class="bg-white bg-opacity-15 backdrop-blur-sm rounded-lg p-6 w-120 mx-auto text-center text-white py-12 border">
+        <div class="bg-white bg-opacity-10 backdrop-blur-sm rounded-lg p-6 w-120 mx-auto text-center text-white py-12 border">
             <!-- School Logo Flex Layout -->
             <div class="flex flex-col items-center justify-center mb-6">
                 <div class="flex items-center space-x-4">

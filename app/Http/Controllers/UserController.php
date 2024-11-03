@@ -35,7 +35,7 @@ class UserController extends Controller
         $kelas = Kelas::all();
 
         // Menampilkan data ke view
-        return view('admin.user.index', compact('user', 'kelas'), ['title' => 'Pengguna']);
+        return view('admin.user.index', compact('user', 'kelas'), ['title' => 'Data Pengguna']);
     }
 
     public function create()
@@ -74,7 +74,7 @@ class UserController extends Controller
     {
         $user = User::findOrFail($id);
         $kelas = Kelas::all();
-        return view('admin.user.edit', compact('user', 'kelas'), ['title' => 'Edit User']);
+        return view('admin.user.edit', compact('user', 'kelas'), ['title' => 'Edit Pengguna']);
     }
 
     public function update(Request $request, string $id)
