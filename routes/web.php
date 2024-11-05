@@ -76,3 +76,9 @@ Route::delete('/deleteNotification/{id}', function ($id) {
     }
     return response()->json(['success' => true]);
 });
+
+use App\Http\Controllers\TestNotificationController;
+
+Route::get('/test-notification', [TestNotificationController::class, 'sendTestNotification']);
+
+Route::post('/send-notification', [NotificationController::class, 'sendNotification']);
