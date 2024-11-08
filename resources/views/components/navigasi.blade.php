@@ -17,7 +17,7 @@
                                 <a href="{{ url('user') }}" class="rounded-md px-3 py-2 text-sm font-medium {{ Request::is('user') || Request::is('user/create') || Request::is('user/*/edit') ? 'bg-green-500 text-white' : 'text-gray-300 hover:bg-green-500 hover:text-white' }}">User</a>
                                 <div class="relative inline-block text-left">
                                     <button class="rounded-md px-3 py-2 text-sm font-medium {{ Request::is('agenda') || Request::is('agenda/kelas/*') || Request::is('absen_guru') || Request::is('absen_guru/kelas/*') || Request::is('absen_siswa.admin_index') ? 'bg-green-500 text-white' : 'text-gray-300 hover:bg-green-500 hover:text-white' }}" id="dropdownMenuButton">
-                                        Lainnya
+                                        Histori
                                         <svg class="ml-1 h-5 w-5 inline-block" fill="currentColor" viewBox="0 0 20 20">
                                             <path d="M5.25 6.25L10 10.75L14.75 6.25H5.25Z"></path>
                                         </svg>
@@ -131,7 +131,7 @@
                     <a href="{{ url('data_siswa') }}" class="block rounded-md px-3 py-2 text-base font-medium {{ Request::is('data_siswa') || Request::is('data_siswa/create') || Request::is('data_siswa/*/edit') ? 'text-white bg-green-500' : 'text-gray-300 hover:bg-green-500 hover:text-white' }}">Siswa</a>
                     <div class="relative">
                         <button onclick="toggleDropdown()" class="w-full text-left block rounded-md px-3 py-2 text-base font-medium {{ Request::is('agenda') || Request::is('agenda/kelas/*') || Request::is('absen_guru') || Request::is('absen_guru/kelas/*') || Request::is('absen_siswa.admin_index') ? 'text-white bg-green-500' : 'text-gray-300 hover:bg-green-500 hover:text-white' }}">
-                            Lainnya
+                            Histori
                         </button>
                         <!-- Dropdown Content -->
                         <div id="dropdownContent" class="hidden mt-1 space-y-1 bg-white rounded-md">
