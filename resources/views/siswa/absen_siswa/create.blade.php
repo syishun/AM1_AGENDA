@@ -1,13 +1,12 @@
 <x-layout>
     <x-slot:title>{{$title}}</x-slot:title>
 
-    <div class="container mx-auto my-6 p-4 bg-white shadow-lg rounded-lg">
         <form action="{{ route('absen_siswa.store') }}" method="post" enctype="multipart/form-data">
             @csrf
 
             <div class="form-group">
                 <label for="tgl" class="block text-sm font-medium text-gray-700">Tanggal</label>
-                <input type="date" class="mt-1 block w-full h-10 bg-gray-200 rounded-md shadow-sm focus:border-green-500 focus:ring-green-500 sm:text-sm @error('tgl') border-red-500 @enderror" id="tgl" name="tgl" value="{{ old('tgl') }}" style="padding-left: 10px;">
+                <input type="date" class="mt-1 block w-full h-10 bg-gray-200 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-green-500 sm:text-sm @error('tgl') border-red-500 @enderror" id="tgl" name="tgl" value="{{ old('tgl') }}" style="padding-left: 10px;">
                 @error('tgl')
                     <p class="mt-2 text-sm text-red-600">{{ $message }}</p>
                 @enderror
@@ -15,7 +14,7 @@
 
             <div class="overflow-y-auto max-h-80">
                 <table class="min-w-full bg-white border-collapse border border-gray-300 rounded-lg table-auto">
-                    <thead class="bg-green-500 text-white">
+                    <thead class="sticky top-0 bg-green-500 text-white">
                         <tr>
                             <th class="px-4 py-2">No</th>
                             <th class="px-4 py-2">Nama Siswa</th>
@@ -50,10 +49,9 @@
             </div>
 
             <div class="mt-4 flex justify-end">
-                <button type="submit" class="bg-green-500 text-white py-2 px-4 rounded hover:bg-green-600">Simpan</button>
+                <button type="submit" class="bg-green-500 text-white py-2 px-4 rounded hover:bg-green-600 transition duration-200">Simpan</button>
             </div>
         </form>
-    </div>
 
     <script>
         function toggleRadio(radio) {

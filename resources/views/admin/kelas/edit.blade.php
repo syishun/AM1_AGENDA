@@ -1,7 +1,7 @@
 <x-layout>
     <x-slot:title>{{$title}}</x-slot:title>
 
-    <div class="container mx-auto p-6 bg-white shadow-md rounded-lg flex flex-col md:flex-row">
+    <div class="container mx-auto p-6 flex flex-col md:flex-row">
 
         <!-- Bagian Kiri: Form -->
         <div class="w-full md:w-1/2 mb-4 md:mb-0">
@@ -32,7 +32,7 @@
 
                 <div>
                     <label for="angkatan" class="block text-sm font-medium text-gray-700">Angkatan</label>
-                    <input type="number" class="mt-1 block w-full h-10 bg-gray-200 rounded-md shadow-sm focus:border-green-500 focus:ring-green-500 sm:text-sm @error('angkatan') border-red-500 @enderror" id="angkatan" name="angkatan" value="{{ old('angkatan', $kelas->angkatan) }}" style="padding-left: 10px;">
+                    <input type="number" class="mt-1 block w-full h-10 bg-gray-200 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-green-500 sm:text-sm @error('angkatan') border-red-500 @enderror" id="angkatan" name="angkatan" value="{{ old('angkatan', $kelas->angkatan) }}" style="padding-left: 10px;">
                     @error('angkatan')
                         <p class="mt-2 text-sm text-red-600">{{ $message }}</p>
                     @enderror
@@ -40,16 +40,14 @@
 
                 <div>
                     <label for="kelas_id" class="block text-sm font-medium text-gray-700">ID Kelas</label>
-                    <input type="text" class="mt-1 block w-full h-10 bg-gray-200 rounded-md shadow-sm focus:border-green-500 focus:ring-green-500 sm:text-sm @error('kelas_id') border-red-500 @enderror" id="kelas_id" name="kelas_id" value="{{ old('kelas_id', $kelas->kelas_id) }}" style="padding-left: 10px;">
+                    <input type="text" class="mt-1 block w-full h-10 bg-gray-200 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-green-500 sm:text-sm @error('kelas_id') border-red-500 @enderror" id="kelas_id" name="kelas_id" value="{{ old('kelas_id', $kelas->kelas_id) }}" style="padding-left: 10px;">
                     @error('kelas_id')
                         <p class="mt-2 text-sm text-red-600">{{ $message }}</p>
                     @enderror
                 </div>
 
                 <div>
-                    <button type="submit" class="bg-green-500 text-white py-2 px-4 rounded hover:bg-green-600">
-                        Update
-                    </button>
+                    <button type="submit" class="bg-green-500 text-white py-2 px-4 rounded hover:bg-green-600 transition duration-200">Update</button>
                 </div>
             </form>
         </div>

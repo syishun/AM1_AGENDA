@@ -64,12 +64,12 @@ class Absen_guruController extends Controller
      */
     public function store(Request $request)
     {
-        // Validasi dan penyimpanan absen
+        // Validasi form input
         $request->validate([
             'mapel_id' => 'required',
             'tgl' => 'required',
             'keterangan' => 'required',
-            'tugas' => 'nullable|mimes:pdf|max:15360',
+            'tugas.*' => 'nullable|mimes:pdf|max:15360', // Validasi untuk setiap file tugas
         ]);
 
         $absen_guru = new Absen_guru;
@@ -78,32 +78,31 @@ class Absen_guruController extends Controller
         $absen_guru->kelas_id = $request->kelas_id;
         $absen_guru->keterangan = $request->keterangan;
 
+        // Simpan semua file tugas jika ada
+        $tugasFiles = [];
         if ($request->hasFile('tugas')) {
-            $fileName = time() . '_' . $request->file('tugas')->getClientOriginalName();
-            $filePath = $request->file('tugas')->storeAs('uploads/tugas', $fileName, 'public');
-            $absen_guru->tugas = $filePath;
+            foreach ($request->file('tugas') as $file) {
+                $fileName = time() . '_' . $file->getClientOriginalName();
+                $filePath = $file->storeAs('uploads/tugas', $fileName, 'public');
+                $tugasFiles[] = $filePath;
+            }
         }
+
+        // Simpan array file path sebagai JSON
+        $absen_guru->tugas = json_encode($tugasFiles);
 
         $absen_guru->save();
 
-        // Siapkan data notifikasi
+        // Data notifikasi
         $data = [
             'title' => 'Absensi Terbaru',
             'message' => 'Absensi baru telah ditambahkan untuk kelas Anda.',
             'link' => url('/absen_guru/kelas/' . $request->kelas_id),
         ];
 
-        // Siapkan data notifikasi
-        $kelas_id = $request->kelas_id; // Ambil kelas_id dari request untuk memastikan kelas benar
-        $data = [
-            'title' => 'Absensi Terbaru',
-            'message' => 'Absensi baru telah ditambahkan untuk kelas Anda.',
-            'link' => url('/absen_guru/kelas/' . $kelas_id), // Gunakan kelas_id yang benar di sini
-        ];
-
-        // Kirim notifikasi hanya ke perwakilan kelas dari kelas terkait
+        // Kirim notifikasi ke perwakilan kelas
         $users = User::where('role', 'Perwakilan Kelas')
-            ->where('kelas_id', $kelas_id) // Pastikan kelas_id sesuai
+            ->where('kelas_id', $request->kelas_id)
             ->get();
 
         foreach ($users as $user) {
@@ -142,7 +141,7 @@ class Absen_guruController extends Controller
             'mapel_id' => 'required',
             'tgl' => 'required',
             'keterangan' => 'required',
-            'tugas' => 'nullable|mimes:pdf|max:15360',
+            'tugas.*' => 'nullable|mimes:pdf|max:15360', // Validasi untuk multiple files
         ]);
 
         $absen_guru = Absen_guru::findOrFail($id);
@@ -152,16 +151,24 @@ class Absen_guruController extends Controller
         $absen_guru->kelas_id = $request->kelas_id;
         $absen_guru->keterangan = $request->keterangan;
 
+        // Ambil tugas yang ada jika ada, decode menjadi array
+        $existingTugas = $absen_guru->tugas ? json_decode($absen_guru->tugas, true) : [];
+
+        // Proses setiap file yang diunggah
         if ($request->hasFile('tugas')) {
-            $fileName = time() . '_' . $request->file('tugas')->getClientOriginalName();
-            $filePath = $request->file('tugas')->storeAs('uploads/tugas', $fileName, 'public');
-            $absen_guru->tugas = $filePath;
+            foreach ($request->file('tugas') as $file) {
+                $fileName = time() . '_' . $file->getClientOriginalName();
+                $filePath = $file->storeAs('uploads/tugas', $fileName, 'public');
+                $existingTugas[] = $filePath; // Tambahkan file baru ke dalam array existingTugas
+            }
         }
+
+        // Update kolom tugas dengan semua file yang ada dalam bentuk JSON
+        $absen_guru->tugas = json_encode($existingTugas);
 
         $absen_guru->save();
         return redirect('absen_guru/kelas/' . $request->kelas_id)->with('status', 'Data berhasil diupdate');
     }
-
 
     /**
      * Remove the specified resource from storage.

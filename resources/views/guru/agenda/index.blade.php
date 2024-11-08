@@ -6,14 +6,8 @@
     @else
     <div class="container mx-auto my-8">
         <div class="flex justify-center">
-            <h1 class="text-center text-2xl font-bold mb-6 inline-block border-b-2 border-green-100 pb-1 text-green-100">Pilih Kelas untuk Melihat Agenda</h1>
+            <h1 class="text-center text-2xl font-bold mb-6 inline-block border-b-2 border-green-100 pb-1 text-green-700">Pilih Kelas untuk Melihat Agenda</h1>
         </div>
-
-        {{-- Unified Container with Reduced Diagonal Background Gradient --}}
-        <div class="container bg-white rounded-lg p-6 shadow-md relative overflow-hidden">
-
-            {{-- Diagonal Overlay with Reduced Skew --}}
-            <div class="absolute inset-0 bg-gradient-to-br from-transparent via-transparent to-gray-300"></div>
 
             {{-- Grade X --}}
             <div class="flex justify-center mb-6 relative">
@@ -57,7 +51,6 @@
                 @endforeach
             </div>
 
-        </div>
     </div>
     @endif
 </x-layout>

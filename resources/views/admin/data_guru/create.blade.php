@@ -1,7 +1,7 @@
 <x-layout>
     <x-slot:title>{{$title}}</x-slot:title>
 
-    <div class="container mx-auto p-6 bg-white shadow-md rounded-lg flex flex-col md:flex-row">
+    <div class="container mx-auto p-6 flex flex-col md:flex-row">
 
         <!-- Bagian Kiri: Form -->
         <div class="w-full md:w-1/2 mb-4 md:mb-0">
@@ -10,7 +10,7 @@
 
                 <div>
                     <label for="nama_guru" class="block text-sm font-medium text-gray-700">Nama Lengkap</label>
-                    <input type="text" class="mt-1 block w-full h-10 bg-gray-200 rounded-md shadow-sm focus:border-green-500 focus:ring-green-500 sm:text-sm @error('nama_guru') border-red-500 @enderror" id="nama_guru" name="nama_guru" value="{{ old('nama_guru') }}" style="padding-left: 10px;">
+                    <input type="text" class="mt-1 block w-full h-10 bg-gray-200 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-green-500 sm:text-sm @error('nama_guru') border-red-500 @enderror" id="nama_guru" name="nama_guru" value="{{ old('nama_guru') }}" style="padding-left: 10px;">
                     @error('nama_guru')
                         <p class="mt-2 text-sm text-red-600">{{ $message }}</p>
                     @enderror
@@ -18,7 +18,7 @@
 
                 <div>
                     <label for="kode_guru" class="block text-sm font-medium text-gray-700">Kode Guru</label>
-                    <input type="text" class="mt-1 block w-full h-10 bg-gray-200 rounded-md shadow-sm focus:border-green-500 focus:ring-green-500 sm:text-sm @error('kode_guru') border-red-500 @enderror" id="kode_guru" name="kode_guru" value="{{ old('kode_guru') }}" style="padding-left: 10px;">
+                    <input type="text" class="mt-1 block w-full h-10 bg-gray-200 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-green-500 sm:text-sm @error('kode_guru') border-red-500 @enderror" id="kode_guru" name="kode_guru" value="{{ old('kode_guru') }}" style="padding-left: 10px;">
                     @error('kode_guru')
                         <p class="mt-2 text-sm text-red-600">{{ $message }}</p>
                     @enderror
@@ -46,9 +46,7 @@
                 </div>
 
                 <div>
-                    <button type="submit" class="bg-green-500 text-white py-2 px-4 rounded hover:bg-green-600">
-                        Simpan
-                    </button>
+                    <button type="submit" class="bg-green-500 text-white py-2 px-4 rounded hover:bg-green-600 transition duration-200">Simpan</button>
                 </div>
             </form>
         </div>

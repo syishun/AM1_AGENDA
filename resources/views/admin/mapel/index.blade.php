@@ -1,17 +1,22 @@
 <x-layout>
     <x-slot:title>{{$title}}</x-slot:title>
 
-    <div class="container mx-auto p-6 bg-white shadow-md rounded-lg">
-        <div class="flex justify-end mb-6">
-            <a href="{{ url('mapel/create') }}" class="bg-green-500 text-white py-2 px-4 rounded hover:bg-green-600">Tambah data</a>
-        </div>
+    <div class="flex flex-col md:flex-row md:justify-between items-center mb-6 p-4 rounded-lg">
+        <!-- Form Pencarian Mapel -->
+        <form action="{{ url('mapel') }}" method="GET" class="flex flex-col md:flex-row md:space-x-4 w-full md:w-auto mb-4 md:mb-0">
+            <input type="text" name="search" value="{{ request('search') }}" placeholder="Cari mapel atau guru..." class="py-2 px-4 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-green-500 transition duration-200">
+            <button type="submit" class="bg-green-500 hover:bg-green-600 text-white py-2 px-4 rounded mt-2 md:mt-0 transition duration-200">Cari</button>
+        </form>
+
+        <a href="{{ url('mapel/create') }}" class="bg-green-500 text-white py-2 px-4 rounded hover:bg-green-600 transition duration-200">Tambah Data</a>
+    </div>
 
     @if($mapelSorted->isEmpty())
         <p class="text-center mt-4">Mata pelajaran belum ditambahkan.</p>
     @else
-
-        <div class="overflow-y-auto max-h-80">
-            <table class="min-w-full bg-white border border-gray-300 rounded-lg table-auto">
+        <!-- Tabel data mapel dengan desain konsisten -->
+        <div class="overflow-x-auto mt-4">
+            <table class="min-w-full bg-white border border-gray-300 rounded-lg shadow-md">
                 <thead class="sticky top-0 bg-green-500 text-white">
                     <tr class="text-center">
                         <th class="py-3 px-6">Nama Guru</th>
@@ -23,17 +28,17 @@
                 </thead>
                 <tbody>
                     @foreach ($mapelSorted as $item)
-                    <tr class="border-t border-gray-200 hover:bg-gray-100 text-center">
+                    <tr class="border-t border-gray-200 hover:bg-gray-100 text-center transition duration-200">
                         <td class="py-3 px-6 text-left">{{ $item['data_guru']['nama_guru'] }}</td>
                         <td class="py-3 px-6">{{ $item['data_guru']['kode_guru'] }}</td>
                         <td class="py-3 px-6">{{ $item['nama_mapel'] }}</td>
                         <td class="py-3 px-6">{{ $item['mapel_id'] }}</td>
                         <td class="py-3 px-6 flex justify-center space-x-2">
-                            <a href="{{ url('mapel/' . $item['id'] . '/edit') }}" class="bg-yellow-500 text-white py-1 px-3 rounded hover:bg-yellow-600">Edit</a>
+                            <a href="{{ url('mapel/' . $item['id'] . '/edit') }}" class="bg-yellow-500 text-white py-1 px-3 rounded hover:bg-yellow-600 transition duration-200">Edit</a>
                             <form action="{{ url('mapel/' . $item['id']) }}" method="POST" onsubmit="return confirm('Apakah Anda yakin ingin menghapus data ini?');">
                                 @csrf
                                 @method('DELETE')
-                                <button type="submit" class="bg-red-500 text-white py-1 px-3 rounded hover:bg-red-600">Delete</button>
+                                <button type="submit" class="bg-red-500 text-white py-1 px-3 rounded hover:bg-red-600 transition duration-200">Delete</button>
                             </form>
                         </td>
                     </tr>
@@ -42,5 +47,4 @@
             </table>
         </div>
     @endif
-    </div>
 </x-layout>

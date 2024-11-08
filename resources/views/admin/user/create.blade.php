@@ -3,14 +3,14 @@
 <x-layout>
     <x-slot:title>{{$title}}</x-slot:title>
 
-    <div class="container mx-auto p-6 bg-white shadow-md rounded-lg flex flex-col md:flex-row">
+    <div class="container mx-auto p-6 flex flex-col md:flex-row">
         <div class="w-full md:w-1/2 mb-4 md:mb-0">
             <form action="{{ url('user') }}" method="post" enctype="multipart/form-data" class="space-y-4">
                 @csrf
 
                 <div>
                     <label for="name" class="block text-sm font-medium text-gray-700">Name</label>
-                    <input type="text" class="mt-1 block w-full h-10 bg-gray-200 rounded-md shadow-sm focus:border-green-500 focus:ring-green-500 sm:text-sm @error('name') border-red-500 @enderror" id="name" name="name" value="{{ old('name') }}" style="padding-left: 10px;">
+                    <input type="text" class="mt-1 block w-full h-10 bg-gray-200 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-green-500 sm:text-sm @error('name') border-red-500 @enderror" id="name" name="name" value="{{ old('name') }}" style="padding-left: 10px;">
                     @error('name')
                         <p class="mt-2 text-sm text-red-600">{{ $message }}</p>
                     @enderror
@@ -19,7 +19,7 @@
                 <div>
                     <label for="password" class="block text-sm font-medium text-gray-700">Password</label>
                     <div class="relative">
-                        <input type="password" class="mt-1 block w-full h-10 bg-gray-200 rounded-md shadow-sm focus:border-green-500 focus:ring-green-500 sm:text-sm @error('password') border-red-500 @enderror" id="password" name="password" value="{{ old('password') }}" style="padding-left: 10px;">
+                        <input type="password" class="mt-1 block w-full h-10 bg-gray-200 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-green-500 sm:text-sm @error('password') border-red-500 @enderror" id="password" name="password" value="{{ old('password') }}" style="padding-left: 10px;">
                         
                         <!-- Eye Icon -->
                         <span class="absolute inset-y-0 right-3 flex items-center cursor-pointer" onclick="togglePasswordVisibility('password', 'togglePasswordIcon')">
@@ -64,7 +64,7 @@
                 <!-- Dropdown Kelas -->
                 <div id="kelas-section" style="display: none;">
                     <label for="kelas_id" class="block text-sm font-medium text-gray-700">Kelas</label>
-                    <select class="mt-1 block w-full h-10 bg-gray-200 rounded-md shadow-sm focus:border-green-500 focus:ring-green-500 sm:text-sm @error('kelas_id') border-red-500 @enderror" name="kelas_id" id="kelas_id" style="padding-left: 10px;">
+                    <select class="mt-1 block w-full h-10 bg-gray-200 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-green-500 sm:text-sm @error('kelas_id') border-red-500 @enderror" name="kelas_id" id="kelas_id" style="padding-left: 10px;">
                         <option value="">--Pilih--</option>
                         @foreach ($kelas as $item)
                             <option value="{{ $item->id }}">{{ $item->kelas_id }}</option>
@@ -75,7 +75,7 @@
                     @enderror
                 </div>
 
-                <button type="submit" class="w-full bg-green-500 text-white py-2 px-4 rounded hover:bg-green-600">Simpan</button>
+                <button type="submit" class="w-full bg-green-500 text-white py-2 px-4 rounded hover:bg-green-600 transition duration-200">Simpan</button>
             </form>
         </div>
         <!-- Bagian Kanan: Gambar -->

@@ -1,14 +1,13 @@
 <x-layout>
     <x-slot:title>{{$title}}</x-slot:title>
 
-    <div class="container mx-auto my-6 p-4 bg-white shadow-lg rounded-lg">
         <form action="{{ route('absen_siswa.update', $absen_siswa->id) }}" method="post" enctype="multipart/form-data">
             @csrf
             @method('PUT')
 
             <div class="form-group">
                 <label for="tgl" class="block text-sm font-medium text-gray-700">Tanggal</label>
-                <input type="date" class="mt-1 block w-full h-10 bg-gray-200 rounded-md shadow-sm focus:border-green-500 focus:ring-green-500 sm:text-sm @error('tgl') border-red-500 @enderror" id="tgl" name="tgl" value="{{ old('tgl', $absen_siswa->tgl) }}" style="padding-left: 10px;">
+                <input type="date" class="mt-1 block w-full h-10 bg-gray-200 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-green-500 sm:text-sm @error('tgl') border-red-500 @enderror" id="tgl" name="tgl" value="{{ old('tgl', $absen_siswa->tgl) }}" style="padding-left: 10px;">
                 @error('tgl')
                     <p class="mt-2 text-sm text-red-600">{{ $message }}</p>
                 @enderror
@@ -49,8 +48,7 @@
             </div>
 
             <div class="mt-4 flex justify-end">
-                <button type="submit" class="bg-green-500 text-white py-2 px-4 rounded hover:bg-green-600">Update</button>
+                <button type="submit" class="bg-green-500 text-white py-2 px-4 rounded hover:bg-green-600 transition duration-200">Update</button>
             </div>
         </form>
-    </div>
 </x-layout>

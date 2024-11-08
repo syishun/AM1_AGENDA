@@ -11,28 +11,35 @@ class MapelController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        $mapel = Mapel::with('data_guru')->get(); // Include related data_guru to access kode_guru
+        $search = $request->input('search'); // Ambil input pencarian
 
-        // Convert to array to sort
+        // Query untuk mendapatkan data dengan relasi data_guru
+        $mapel = Mapel::with('data_guru')
+            ->when($search, function ($query, $search) {
+                // Filter berdasarkan nama guru atau nama mapel
+                $query->whereHas('data_guru', function ($query) use ($search) {
+                    $query->where('nama_guru', 'like', '%' . $search . '%');
+                })->orWhere('nama_mapel', 'like', '%' . $search . '%');
+            })
+            ->get();
+
+        // Convert ke array dan sort berdasarkan kode_guru
         $mapelArray = $mapel->toArray();
 
-        // Sort the array based on kode_guru
         usort($mapelArray, function ($a, $b) {
-            // Extract numeric and letter parts of kode_guru using regex
             preg_match('/(\d+)([a-z]*)/', $a['data_guru']['kode_guru'], $matchesA);
             preg_match('/(\d+)([a-z]*)/', $b['data_guru']['kode_guru'], $matchesB);
 
-            // Sort numerically first
             if ($matchesA[1] == $matchesB[1]) {
-                return strcmp($matchesA[2], $matchesB[2]); // Sort alphabetically for letters
+                return strcmp($matchesA[2], $matchesB[2]);
             }
 
-            return $matchesA[1] - $matchesB[1]; // Sort by number part
+            return $matchesA[1] - $matchesB[1];
         });
 
-        // Convert back to collection after sorting
+        // Convert kembali ke koleksi setelah sorting
         $mapelSorted = collect($mapelArray);
 
         return view('admin.mapel.index', compact('mapelSorted'), ['title' => 'Mata Pelajaran']);
