@@ -12,14 +12,14 @@ class ComposerStaticInit36108f4255203d87a185799cd14dc3fb
         '7b11c4dc42b3b3023073cb14e519683c' => __DIR__ . '/..' . '/ralouphie/getallheaders/src/getallheaders.php',
         'c964ee0ededf28c96ebd9db5099ef910' => __DIR__ . '/..' . '/guzzlehttp/promises/src/functions_include.php',
         'e69f7f6ee287b969198c3c9d6777bd38' => __DIR__ . '/..' . '/symfony/polyfill-intl-normalizer/bootstrap.php',
-        '37a3dc5111fe8f707ab4c132ef1dbc62' => __DIR__ . '/..' . '/guzzlehttp/guzzle/src/functions_include.php',
         '320cde22f66dd4f5d3fd621d3e88b98f' => __DIR__ . '/..' . '/symfony/polyfill-ctype/bootstrap.php',
+        '37a3dc5111fe8f707ab4c132ef1dbc62' => __DIR__ . '/..' . '/guzzlehttp/guzzle/src/functions_include.php',
         '8825ede83f2f289127722d4e842cf7e8' => __DIR__ . '/..' . '/symfony/polyfill-intl-grapheme/bootstrap.php',
         'b6b991a57620e2fb6b2f66f03fe9ddc2' => __DIR__ . '/..' . '/symfony/string/Resources/functions.php',
         '662a729f963d39afe703c9d9b7ab4a8c' => __DIR__ . '/..' . '/symfony/polyfill-php83/bootstrap.php',
+        '29ffe97919493792170d47eb03a68da9' => __DIR__ . '/..' . '/blade-ui-kit/blade-icons/src/helpers.php',
         'f598d06aa772fa33d905e87be6398fb1' => __DIR__ . '/..' . '/symfony/polyfill-intl-idn/bootstrap.php',
         '667aeda72477189d0494fecd327c3641' => __DIR__ . '/..' . '/symfony/var-dumper/Resources/functions/dump.php',
-        '29ffe97919493792170d47eb03a68da9' => __DIR__ . '/..' . '/blade-ui-kit/blade-icons/src/helpers.php',
         'a4a119a56e50fbb293281d9a48007e0e' => __DIR__ . '/..' . '/symfony/polyfill-php80/bootstrap.php',
         '27592325262b385204a263c2ab632d6e' => __DIR__ . '/..' . '/kreait/clock/src/Clock.php',
         'e39a8b23c42d4e1452234d762b03835a' => __DIR__ . '/..' . '/ramsey/uuid/src/functions.php',
@@ -218,6 +218,7 @@ class ComposerStaticInit36108f4255203d87a185799cd14dc3fb
             'Monolog\\' => 8,
             'Mockery\\' => 8,
             'Minishlink\\WebPush\\' => 19,
+            'MallardDuck\\LucideIcons\\' => 24,
             'MallardDuck\\BladeBoxicons\\' => 26,
         ),
         'L' => 
@@ -307,9 +308,11 @@ class ComposerStaticInit36108f4255203d87a185799cd14dc3fb
         array (
             'Cron\\' => 5,
             'Codeat3\\BladePepicons\\' => 22,
+            'Codeat3\\BladeGoogleMaterialDesignIcons\\' => 39,
             'Codeat3\\BladeElusiveIcons\\' => 26,
             'Codeat3\\BladeElementPlusIcons\\' => 30,
             'Codeat3\\BladeCarbonIcons\\' => 25,
+            'Codeat3\\BladeAkarIcons\\' => 23,
             'Carbon\\Doctrine\\' => 16,
             'Carbon\\' => 7,
         ),
@@ -560,6 +563,10 @@ class ComposerStaticInit36108f4255203d87a185799cd14dc3fb
         'Minishlink\\WebPush\\' => 
         array (
             0 => __DIR__ . '/..' . '/minishlink/web-push/src',
+        ),
+        'MallardDuck\\LucideIcons\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/mallardduck/blade-lucide-icons/src',
         ),
         'MallardDuck\\BladeBoxicons\\' => 
         array (
@@ -813,6 +820,10 @@ class ComposerStaticInit36108f4255203d87a185799cd14dc3fb
         array (
             0 => __DIR__ . '/..' . '/codeat3/blade-pepicons/src',
         ),
+        'Codeat3\\BladeGoogleMaterialDesignIcons\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/codeat3/blade-google-material-design-icons/src',
+        ),
         'Codeat3\\BladeElusiveIcons\\' => 
         array (
             0 => __DIR__ . '/..' . '/codeat3/blade-elusive-icons/src',
@@ -824,6 +835,10 @@ class ComposerStaticInit36108f4255203d87a185799cd14dc3fb
         'Codeat3\\BladeCarbonIcons\\' => 
         array (
             0 => __DIR__ . '/..' . '/codeat3/blade-carbon-icons/src',
+        ),
+        'Codeat3\\BladeAkarIcons\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/codeat3/blade-akar-icons/src',
         ),
         'Carbon\\Doctrine\\' => 
         array (
@@ -1047,9 +1062,11 @@ class ComposerStaticInit36108f4255203d87a185799cd14dc3fb
         'Carbon\\Unit' => __DIR__ . '/..' . '/nesbot/carbon/src/Carbon/Unit.php',
         'Carbon\\WeekDay' => __DIR__ . '/..' . '/nesbot/carbon/src/Carbon/WeekDay.php',
         'Carbon\\WrapperClock' => __DIR__ . '/..' . '/nesbot/carbon/src/Carbon/WrapperClock.php',
+        'Codeat3\\BladeAkarIcons\\BladeAkarIconsServiceProvider' => __DIR__ . '/..' . '/codeat3/blade-akar-icons/src/BladeAkarIconsServiceProvider.php',
         'Codeat3\\BladeCarbonIcons\\BladeCarbonIconsServiceProvider' => __DIR__ . '/..' . '/codeat3/blade-carbon-icons/src/BladeCarbonIconsServiceProvider.php',
         'Codeat3\\BladeElementPlusIcons\\BladeElementPlusIconsServiceProvider' => __DIR__ . '/..' . '/codeat3/blade-element-plus-icons/src/BladeElementPlusIconsServiceProvider.php',
         'Codeat3\\BladeElusiveIcons\\BladeElusiveIconsServiceProvider' => __DIR__ . '/..' . '/codeat3/blade-elusive-icons/src/BladeElusiveIconsServiceProvider.php',
+        'Codeat3\\BladeGoogleMaterialDesignIcons\\BladeGoogleMaterialDesignIconsServiceProvider' => __DIR__ . '/..' . '/codeat3/blade-google-material-design-icons/src/BladeGoogleMaterialDesignIconsServiceProvider.php',
         'Codeat3\\BladePepicons\\BladePepiconsServiceProvider' => __DIR__ . '/..' . '/codeat3/blade-pepicons/src/BladePepiconsServiceProvider.php',
         'Composer\\InstalledVersions' => __DIR__ . '/..' . '/composer/InstalledVersions.php',
         'Cron\\AbstractField' => __DIR__ . '/..' . '/dragonmantank/cron-expression/src/Cron/AbstractField.php',
@@ -4959,6 +4976,7 @@ class ComposerStaticInit36108f4255203d87a185799cd14dc3fb
         'League\\MimeTypeDetection\\MimeTypeDetector' => __DIR__ . '/..' . '/league/mime-type-detection/src/MimeTypeDetector.php',
         'League\\MimeTypeDetection\\OverridingExtensionToMimeTypeMap' => __DIR__ . '/..' . '/league/mime-type-detection/src/OverridingExtensionToMimeTypeMap.php',
         'MallardDuck\\BladeBoxicons\\BladeBoxiconsServiceProvider' => __DIR__ . '/..' . '/mallardduck/blade-boxicons/src/BladeBoxiconsServiceProvider.php',
+        'MallardDuck\\LucideIcons\\BladeLucideIconsServiceProvider' => __DIR__ . '/..' . '/mallardduck/blade-lucide-icons/src/BladeLucideIconsServiceProvider.php',
         'Minishlink\\WebPush\\Encryption' => __DIR__ . '/..' . '/minishlink/web-push/src/Encryption.php',
         'Minishlink\\WebPush\\MessageSentReport' => __DIR__ . '/..' . '/minishlink/web-push/src/MessageSentReport.php',
         'Minishlink\\WebPush\\Notification' => __DIR__ . '/..' . '/minishlink/web-push/src/Notification.php',

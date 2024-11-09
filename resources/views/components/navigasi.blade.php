@@ -32,9 +32,16 @@
         </button>
         <!-- Dropdown Content -->
         <div id="dropdownContent" class="hidden absolute left-0 mt-1 w-full bg-white shadow-md rounded-md z-10">
-          <a href="{{ url('agenda') }}" class="flex items-center px-4 py-2 text-sm {{ Request::is('agenda') || Request::is('agenda/kelas/*') ? 'bg-green-500 text-white' : 'text-gray-700 hover:bg-green-100' }}">Agenda</a>
-          <a href="{{ url('absen_guru') }}" class="flex items-center px-4 py-2 text-sm {{ Request::is('absen_guru') || Request::is('absen_guru/kelas/*') ? 'bg-green-500 text-white' : 'text-gray-700 hover:bg-green-100' }}">Absensi Guru</a>
-          <a href="{{ url('absen_siswa.admin_index') }}" class="flex items-center px-4 py-2 text-sm {{ Request::is('absen_siswa.admin_index') ? 'bg-green-500 text-white' : 'text-gray-700 hover:bg-green-100' }}">Absensi Siswa</a>
+          <a href="{{ url('agenda') }}" class="flex items-center px-4 py-2 text-sm {{ Request::is('agenda') || Request::is('agenda/kelas/*') ? 'bg-green-500 text-white' : 'text-gray-700 hover:bg-green-100' }}">
+            <x-lucide-clipboard-pen-line class="w-5 h-5 mr-2" /> 
+            <span>Agenda</span></a></a>
+          <a href="{{ url('absen_guru') }}" class="flex items-center px-4 py-2 text-sm {{ Request::is('absen_guru') || Request::is('absen_guru/kelas/*') ? 'bg-green-500 text-white' : 'text-gray-700 hover:bg-green-100' }}">
+            <x-fas-user-check class="w-5 h-5 mr-2" /> 
+            <span>Absensi Guru</span></a></a>
+          <a href="{{ url('absen_siswa.admin_index') }}" class="flex items-center px-4 py-2 text-sm {{ Request::is('absen_siswa.admin_index') ? 'bg-green-500 text-white' : 'text-gray-700 hover:bg-green-100' }}">
+            <x-akar-clipboard class="w-5 h-5 mr-2" /> 
+            <span>Absensi Siswa</span></a>
+          </a>
         </div>
       </div>
     @elseif (Auth::user()->role == 'Guru')
@@ -43,10 +50,10 @@
         <span>Beranda</span>
       </a>
       <a href="{{ url('agenda') }}" class="flex items-center px-4 py-2 rounded-md text-sm {{ Request::is('agenda') || Request::is('agenda/kelas/*') || Request::is('agenda/create/*') || Request::is('agenda/*/edit') ? 'bg-green-500' : 'hover:bg-green-500' }}">
-        <x-heroicon-s-home class="w-5 h-5 mr-2" /> 
+        <x-lucide-clipboard-pen-line class="w-5 h-5 mr-2" /> 
         <span>Agenda</span></a>
       <a href="{{ url('absen_guru') }}" class="flex items-center px-4 py-2 rounded-md text-sm {{ Request::is('absen_guru') || Request::is('absen_guru/kelas/*') || Request::is('absen_guru/create/*') || Request::is('absen_guru/*/edit') ? 'bg-green-500' : 'hover:bg-green-500' }}">
-        <x-heroicon-s-home class="w-5 h-5 mr-2" /> 
+        <x-fas-user-check class="w-5 h-5 mr-2" /> 
         <span>Absensi</span></a>
     @elseif (Auth::user()->role == 'Perwakilan Kelas')
       <a href="{{ url('siswa') }}" class="flex items-center px-4 py-2 rounded-md text-sm {{ Request::is('siswa') ? 'bg-green-500' : 'hover:bg-green-500' }}">
@@ -54,7 +61,7 @@
         <span>Beranda</span>
       </a>
       <a href="{{ url('absen_siswa') }}" class="flex items-center px-4 py-2 rounded-md text-sm {{ Request::is('absen_siswa') || Request::is('absen_siswa/create') || Request::is('absen_siswa/*/edit') ? 'bg-green-500' : 'hover:bg-green-500' }}">
-        <x-heroicon-s-home class="w-5 h-5 mr-2" /> 
+        <x-akar-clipboard class="w-5 h-5 mr-2" /> 
         <span>Absensi</span></a>
       <a href="{{ $kelasId ? url('absen_guru/kelas/' . $kelasId) : '#' }}" class="flex items-center px-4 py-2 rounded-md text-sm {{ Request::is('absen_guru/kelas/' . $kelasId) ? 'bg-green-500' : 'hover:bg-green-500' }}">
         <x-carbon-task class="w-5 h-5 mr-2" /> 

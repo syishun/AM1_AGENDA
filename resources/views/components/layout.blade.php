@@ -30,8 +30,9 @@
 
       <form method="POST" action="{{ route('logout') }}" class="mt-auto p-4">
         @csrf
-        <button type="submit" class="w-full text-left px-4 py-2 text-sm rounded-md hover:bg-red-500 focus:outline-none focus:bg-red-600">
-            Log out
+        <button type="submit" class="flex items-center w-full text-left px-4 py-2 text-sm rounded-md hover:bg-red-500 focus:outline-none focus:bg-red-600">
+          <x-gmdi-logout-r class="w-5 h-5 mr-2" /> 
+          <span>Log out</span>
         </button>
       </form>
     </aside>
