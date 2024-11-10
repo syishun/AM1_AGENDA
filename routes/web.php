@@ -33,8 +33,6 @@ Route::middleware(['auth', 'role:Admin'])->group(function () {
     Route::resource('kelas', KelasController::class);
     Route::resource('data_siswa', Data_siswaController::class);
     Route::resource('user', UserController::class);
-    Route::get('/absen_siswa.admin_index', [Absen_siswaController::class, 'indexForAdmin'])->middleware('auth')->name('absen_siswa_admin');
-    Route::get('/absen_siswa/admin_index', [Absen_siswaController::class, 'indexForAdmin'])->middleware('auth')->name('absen_siswa.admin_index');
 });
 
 // Halaman Guru
@@ -51,7 +49,6 @@ Route::middleware(['auth', 'role:Guru'])->group(function () {
 // Halaman Siswa
 Route::middleware(['auth', 'role:Perwakilan Kelas'])->group(function () {
     Route::resource('siswa', SiswaController::class);
-    Route::resource('absen_siswa', Absen_siswaController::class);
 });
 
 Route::middleware(['auth', 'role:Guru,Admin'])->group(function () {
@@ -62,6 +59,10 @@ Route::middleware(['auth', 'role:Guru,Admin'])->group(function () {
 
 Route::middleware(['auth', 'role:Guru,Admin,Perwakilan Kelas'])->group(function () {
     Route::get('absen_guru/kelas/{id}', [Absen_guruController::class, 'absen_guruByClass']);
+});
+
+Route::middleware(['auth', 'role:Admin,Perwakilan Kelas'])->group(function () {
+    Route::resource('absen_siswa', Absen_siswaController::class);
 });
 
 // Login

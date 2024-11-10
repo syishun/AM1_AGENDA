@@ -31,7 +31,7 @@
       <form method="POST" action="{{ route('logout') }}" class="mt-auto p-4">
         @csrf
         <button type="submit" class="flex items-center w-full text-left px-4 py-2 text-sm rounded-md hover:bg-red-500 focus:outline-none focus:bg-red-600">
-          <x-gmdi-logout-r class="w-5 h-5 mr-2" /> 
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" style="fill: rgba(255, 255, 255, 1);transform: ;msFilter:;"><path d="M16 13v-2H7V8l-5 4 5 4v-3z"></path><path d="M20 3h-9c-1.103 0-2 .897-2 2v4h2V5h9v14h-9v-4H9v4c0 1.103.897 2 2 2h9c1.103 0 2-.897 2-2V5c0-1.103-.897-2-2-2z"></path></svg>
           <span>Log out</span>
         </button>
       </form>

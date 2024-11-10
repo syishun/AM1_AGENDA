@@ -1,6 +1,7 @@
 <x-layout>
     <x-slot:title>{{$title}}</x-slot:title>
 
+    @if (Auth::user()->role == 'Perwakilan Kelas')
         <form action="{{ route('absen_siswa.store') }}" method="post" enctype="multipart/form-data">
             @csrf
 
@@ -63,4 +64,8 @@
             }
         }
     </script>
+    @endif
+    @if (Auth::user()->role == 'Admin')
+    <p class="text-center mt-4">Anda tidak memiliki hak untuk mengakses halaman ini.</p>
+    @endif
 </x-layout>

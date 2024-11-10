@@ -3,22 +3,13 @@
         'name' => 'laravel/laravel',
         'pretty_version' => 'dev-main',
         'version' => 'dev-main',
-        'reference' => 'b91c9be465e8a96f4cb7d88709b7b81686cc992f',
+        'reference' => '4556485fbef11709d6dee7c6676730868b025349',
         'type' => 'project',
         'install_path' => __DIR__ . '/../../',
         'aliases' => array(),
         'dev' => true,
     ),
     'versions' => array(
-        'blade-ui-kit/blade-icons' => array(
-            'pretty_version' => '1.7.2',
-            'version' => '1.7.2.0',
-            'reference' => '75a54a3f5a2810fcf6574ab23e91b6cc229a1b53',
-            'type' => 'library',
-            'install_path' => __DIR__ . '/../blade-ui-kit/blade-icons',
-            'aliases' => array(),
-            'dev_requirement' => false,
-        ),
         'brick/math' => array(
             'pretty_version' => '0.12.1',
             'version' => '0.12.1.0',
@@ -478,12 +469,6 @@
                 0 => 'v11.30.0',
             ),
         ),
-        'jfvoliveira/blade-boxicons' => array(
-            'dev_requirement' => false,
-            'replaced' => array(
-                0 => '1.1.2',
-            ),
-        ),
         'kodova/hamcrest-php' => array(
             'dev_requirement' => true,
             'replaced' => array(
@@ -538,7 +523,7 @@
         'laravel/laravel' => array(
             'pretty_version' => 'dev-main',
             'version' => 'dev-main',
-            'reference' => 'b91c9be465e8a96f4cb7d88709b7b81686cc992f',
+            'reference' => '4556485fbef11709d6dee7c6676730868b025349',
             'type' => 'project',
             'install_path' => __DIR__ . '/../../',
             'aliases' => array(),
@@ -652,24 +637,6 @@
             'aliases' => array(),
             'dev_requirement' => false,
         ),
-        'mallardduck/blade-boxicons' => array(
-            'pretty_version' => '2.4.0',
-            'version' => '2.4.0.0',
-            'reference' => 'de0d53e6bd08bc21973487e84681b71e2f00b889',
-            'type' => 'library',
-            'install_path' => __DIR__ . '/../mallardduck/blade-boxicons',
-            'aliases' => array(),
-            'dev_requirement' => false,
-        ),
-        'mallardduck/blade-lucide-icons' => array(
-            'pretty_version' => '1.23.0',
-            'version' => '1.23.0.0',
-            'reference' => '19081819bb527e15eed22f6528b9d059c1a8df8b',
-            'type' => 'library',
-            'install_path' => __DIR__ . '/../mallardduck/blade-lucide-icons',
-            'aliases' => array(),
-            'dev_requirement' => false,
-        ),
         'minishlink/web-push' => array(
             'pretty_version' => 'v9.0.1',
             'version' => '9.0.1.0',
@@ -772,15 +739,6 @@
             'reference' => '42c84e4e8090766bbd6445d06cd6e57650626ea3',
             'type' => 'library',
             'install_path' => __DIR__ . '/../nunomaduro/termwind',
-            'aliases' => array(),
-            'dev_requirement' => false,
-        ),
-        'owenvoke/blade-fontawesome' => array(
-            'pretty_version' => 'v2.7.0',
-            'version' => '2.7.0.0',
-            'reference' => 'f43b9c6f9330db60f23ad6ea8ce211b610d340f5',
-            'type' => 'library',
-            'install_path' => __DIR__ . '/../owenvoke/blade-fontawesome',
             'aliases' => array(),
             'dev_requirement' => false,
         ),
@@ -1504,15 +1462,6 @@
             'install_path' => __DIR__ . '/../symfony/yaml',
             'aliases' => array(),
             'dev_requirement' => true,
-        ),
-        'thecodingmachine/safe' => array(
-            'pretty_version' => 'v2.5.0',
-            'version' => '2.5.0.0',
-            'reference' => '3115ecd6b4391662b4931daac4eba6b07a2ac1f0',
-            'type' => 'library',
-            'install_path' => __DIR__ . '/../thecodingmachine/safe',
-            'aliases' => array(),
-            'dev_requirement' => false,
         ),
         'theseer/tokenizer' => array(
             'pretty_version' => '1.2.3',
