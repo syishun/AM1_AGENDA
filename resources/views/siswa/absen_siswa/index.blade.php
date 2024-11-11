@@ -4,7 +4,7 @@
     <!-- Search, Date Filter, and Add Button aligned -->
     <div class="flex flex-col md:flex-row justify-between items-center mb-6 p-4 space-y-4 md:space-y-0 md:space-x-4">
         <form method="GET" action="{{ route('absen_siswa.index') }}" class="flex flex-col md:flex-row items-center w-full md:w-auto space-y-4 md:space-y-0 md:space-x-2">
-            <input type="text" name="search" placeholder="Cari siswa..." value="{{ $search ?? '' }}" class="border rounded p-2 w-full md:w-64 focus:outline-none focus:ring-2 focus:ring-green-500 transition duration-200">
+            <input type="text" name="search" placeholder="Cari @if (Auth::user()->role == 'Admin') kelas atau @endif siswa..." value="{{ $search ?? '' }}" class="border rounded p-2 w-full md:w-64 focus:outline-none focus:ring-2 focus:ring-green-500 transition duration-200">
             <input type="date" name="date" value="{{ $filterDate ?? '' }}" class="border rounded p-2 w-full md:w-auto focus:outline-none focus:ring-2 focus:ring-green-500 transition duration-200">
             <div class="flex space-x-2 w-full md:w-auto">
                 <button type="submit" class="bg-green-500 hover:bg-green-600 text-white py-2 px-4 rounded transition duration-200 w-full md:w-auto">Cari</button>
@@ -20,7 +20,12 @@
     @if(isset($searchMessage))
         <p class="text-center mt-4">{{ $searchMessage }}</p>
     @elseif($absen_siswa->isEmpty())
+    @if (Auth::user()->role == 'Admin')
+        <p class="text-center mt-4">Tidak ada data absensi yang ditemukan</p>
+        @endif
+        @if (Auth::user()->role == 'Perwakilan Kelas')
         <p class="text-center mt-4">Tidak ada absensi untuk kelas ini.</p>
+        @endif
     @else
         <!-- Loop through each date group -->
         @foreach ($absen_siswa as $date => $records)
@@ -37,6 +42,9 @@
                                 <th class="px-4 py-2">Kelas</th>
                                 @endif
                                 <th class="px-4 py-2">Keterangan</th>
+                                @if(Auth::user()->role == 'Admin')
+                                    <th class="py-3 px-6">Waktu Ditambahkan</th>
+                                @endif
                                 <th class="px-4 py-2">Aksi</th>
                             </tr>
                         </thead>
@@ -49,6 +57,9 @@
                                     <td class="px-4 py-2 text-left">{{ $item->kelas->kelas_id }}</td>
                                     @endif
                                     <td class="px-4 py-2">{{ $item->keterangan }}</td>
+                                    @if(Auth::user()->role == 'Admin')
+                                    <td class="px-4 py-2">{{ \Carbon\Carbon::parse($item->created_at)->timezone('Asia/Jakarta')->format('d M Y H:i:s') }}</td>
+                                    @endif
                                     <td class="px-4 py-2">
                                         <div class="flex justify-center space-x-2">
                                             <a href="{{ route('absen_siswa.edit', $item->id) }}" class="bg-yellow-500 text-white px-3 py-1 rounded-md hover:bg-yellow-600 transition duration-200">Edit</a>

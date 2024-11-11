@@ -61,6 +61,19 @@
                     @enderror
                 </div>
 
+                <div id="kode-guru-section" style="display: none;">
+                    <label for="kode_guru" class="block text-sm font-medium text-gray-700">Kode Guru</label>
+                    <select id="kode_guru" name="kode_guru" class="mt-1 block w-full h-10 bg-gray-200 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-green-500 sm:text-sm @error('kode_guru') border-red-500 @enderror" style="padding-left: 10px;">
+                        <option value="">--Pilih--</option>
+                        @foreach ($data_guru as $item)
+                            <option value="{{ $item->id }}">{{ $item->kode_guru }}</option>
+                        @endforeach
+                    </select>
+                    @error('kode_guru')
+                        <p class="mt-2 text-sm text-red-600">{{ $message }}</p>
+                    @enderror
+                </div>
+
                 <!-- Dropdown Kelas -->
                 <div id="kelas-section" style="display: none;">
                     <label for="kelas_id" class="block text-sm font-medium text-gray-700">Kelas</label>
@@ -119,6 +132,34 @@
                 toggleIcon.classList.remove('fa-eye-slash');
                 toggleIcon.classList.add('fa-eye');
             }
+        }
+        document.addEventListener('DOMContentLoaded', function() {
+            const roleInputs = document.querySelectorAll('input[name="role"]');
+            const kodeGuruSection = document.getElementById('kode-guru-section');
+
+            roleInputs.forEach(roleInput => {
+                roleInput.addEventListener('change', function() {
+                    if (this.value === 'Guru') {
+                        kodeGuruSection.style.display = 'block';
+                    } else {
+                        kodeGuruSection.style.display = 'none';
+                    }
+                });
+            });
+
+            // Ensure 'Kode Guru' dropdown appears if 'Guru' role is selected on page load
+            const checkedRole = document.querySelector('input[name="role"]:checked');
+            if (checkedRole && checkedRole.value === 'Guru') {
+                kodeGuruSection.style.display = 'block';
+            }
+        });
+
+        function togglePasswordVisibility(passwordFieldId, iconId) {
+            const passwordField = document.getElementById(passwordFieldId);
+            const toggleIcon = document.getElementById(iconId);
+            passwordField.type = passwordField.type === 'password' ? 'text' : 'password';
+            toggleIcon.classList.toggle('fa-eye');
+            toggleIcon.classList.toggle('fa-eye-slash');
         }
     </script>
 </x-layout>

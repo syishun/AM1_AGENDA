@@ -15,18 +15,19 @@
                     <label for="mapel_id" class="block text-sm font-medium text-gray-700">Mapel</label>
                     <select class="mt-1 block w-full h-10 bg-gray-200 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-green-500 sm:text-sm @error('mapel_id') border-red-500 @enderror" name="mapel_id" id="mapel_id" style="padding-left: 10px">
                         @foreach ($mapel as $item)
-                        <option value="{{ $item->id }}" {{ $absen_guru->mapel_id == $item->id ? 'selected' : '' }}>{{ $item->mapel_id }}</option>
+                            <option value="{{ $item->id }}" {{ $absen_guru->mapel_id == $item->id ? 'selected' : '' }}>{{ $item->mapel_id }}</option>
                         @endforeach
                     </select>
                     @error('mapel_id')
                         <p class="mt-2 text-sm text-red-600">{{ $message }}</p>
                     @enderror
-                </div>
+                </div>     
 
                 <!-- Tanggal -->
                 <div class="form-group">
                     <label for="tgl" class="block text-sm font-medium text-gray-700">Tanggal</label>
-                    <input type="date" class="mt-1 block w-full h-10 bg-gray-200 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-green-500 sm:text-sm @error('tgl') border-red-500 @enderror" id="tgl" name="tgl" value="{{ old('tgl', $absen_guru->tgl) }}" style="padding-left: 10px;">
+                    <input type="date" class="mt-1 block w-full h-10 bg-gray-200 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-green-500 sm:text-sm @error('tgl') border-red-500 @enderror" 
+                                id="tgl" name="tgl" value="{{ old('tgl', $absen_guru->tgl) }}" style="padding-left: 10px;" readonly>
                     @error('tgl')
                         <p class="mt-2 text-sm text-red-600">{{ $message }}</p>
                     @enderror

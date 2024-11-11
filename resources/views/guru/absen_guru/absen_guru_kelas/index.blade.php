@@ -34,10 +34,15 @@
                     <thead class="sticky top-0 bg-green-500 text-white">
                         <tr class="text-center">
                             <th class="px-4 py-2">No</th>
-                            <th class="px-4 py-2">Guru</th>
+                            @if(Auth::user()->role == 'Admin'||'Perwakilan Kelas')
+                            <th class="px-4 py-2">Nama Guru</th>
+                            @endif
                             <th class="px-4 py-2">Mapel</th>
                             <th class="px-4 py-2">Keterangan</th>
                             <th class="px-4 py-2">Indikator Kompetensi</th>
+                            @if(Auth::user()->role == 'Admin')
+                            <th class="px-4 py-2">Waktu Ditambahkan</th>
+                            @endif
                             @if(Auth::user()->role == 'Guru')
                             <th class="px-4 py-2">Aksi</th>
                             @endif
@@ -47,13 +52,19 @@
                         @foreach ($absensiItems as $item)
                             <tr class="text-center border-t border-gray-200 hover:bg-gray-100">
                                 <td class="px-4 py-2">{{ $loop->iteration }}</td>
-                                <td class="px-4 py-2 text-left">{{ $item->mapel->data_guru->nama_guru ?? 'Guru tidak ditemukan' }}</td>
+                                @if(Auth::user()->role == 'Admin'||'Perwakilan Kelas')
+                                <td class="px-4 py-2">{{ $item->mapel->data_guru->nama_guru }}</td>
+                                @endif
                                 <td class="px-4 py-2">{{ $item->mapel->nama_mapel }}</td>
                                 <td class="px-4 py-2">{{ $item->keterangan }}</td>
                                 <td class="px-4 py-2">
-                                    @if($item->tugas)
+                                    @php
+                                        $tugasList = json_decode($item->tugas);
+                                    @endphp
+                                
+                                    @if(!empty($tugasList) && is_array($tugasList))
                                         <div class="flex flex-col space-y-1">
-                                            @foreach (json_decode($item->tugas) as $file)
+                                            @foreach ($tugasList as $file)
                                                 <a href="{{ asset('storage/' . $file) }}" download class="text-blue-500 hover:underline flex items-center">
                                                     <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v16h16V4H4zm4 8h8m-8 4h8M4 4h16v16H4V4z" />
@@ -65,16 +76,21 @@
                                     @else
                                         <span class="block text-gray-500">-</span>
                                     @endif
-                                </td>                                                            
+                                </td>                                              
+                                @if(Auth::user()->role == 'Admin')
+                                <td class="px-4 py-2">{{ \Carbon\Carbon::parse($item->created_at)->timezone('Asia/Jakarta')->format('d M Y H:i:s') }}</td>
+                                @endif
                                 @if(Auth::user()->role == 'Guru')
                                 <td class="px-4 py-2 text-center">
                                     <div class="flex justify-center items-center space-x-2">
-                                        <a href="{{ url('absen_guru/' . $item->id . '/edit') }}" class="bg-yellow-500 text-white px-3 py-1 rounded hover:bg-yellow-600 transition duration-200">Edit</a>
-                                        <form action="{{ url('absen_guru/' . $item->id) }}" method="POST" class="inline" onsubmit="return confirm('Apakah Anda yakin ingin menghapus data ini?');">
+                                        @if($item->mapel->kode_guru == Auth::user()->kode_guru)
+                                        <a href="{{ url('absen_guru/' . $item->id . '/edit') }}" class="bg-yellow-500 text-white py-1 px-3 rounded hover:bg-yellow-600 transition duration-200">Edit</a>
+                                        <form action="{{ url('absen_guru/' . $item->id) }}" method="POST" onsubmit="return confirm('Apakah Anda yakin ingin menghapus data ini?');">
                                             @csrf
                                             @method('DELETE')
-                                            <button type="submit" class="bg-red-500 text-white px-3 py-1 rounded hover:bg-red-600 transition duration-200">Delete</button>
+                                            <button type="submit" class="bg-red-500 text-white py-1 px-3 rounded hover:bg-red-600 transition duration-200">Delete</button>
                                         </form>
+                                    @endif
                                     </div>
                                 </td>                                
                                 @endif

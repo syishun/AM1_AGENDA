@@ -59,6 +59,19 @@
                     @enderror
                 </div>
 
+                <div id="kode-guru-section" style="display: none;">
+                    <label for="kode_guru" class="block text-sm font-medium text-gray-700">Kode Guru</label>
+                    <select class="mt-1 block w-full h-10 bg-gray-200 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-green-500 sm:text-sm @error('kode_guru') border-red-500 @enderror" name="kode_guru" id="kode_guru" style="padding-left: 10px;">
+                        <option value="">--Pilih--</option>
+                        @foreach ($data_guru as $item)
+                            <option value="{{ $item->id }}" {{ old('kode_guru', $user->kode_guru) == $item->id ? 'selected' : '' }}>{{ $item->kode_guru }}</option>
+                        @endforeach
+                    </select>
+                    @error('kode_guru')
+                        <p class="mt-2 text-sm text-red-600">{{ $message }}</p>
+                    @enderror
+                </div>
+
                 <!-- Dropdown Kelas -->
                 <div id="kelas-section" style="display: none;">
                     <label for="kelas_id" class="block text-sm font-medium text-gray-700">Kelas</label>
@@ -118,5 +131,35 @@
                 toggleIcon.classList.add('fa-eye');
             }
         }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            const roleInputs = document.querySelectorAll('input[name="role"]');
+            const kelasSection = document.getElementById('kelas-section');
+            const kodeGuruSection = document.getElementById('kode-guru-section');
+
+            roleInputs.forEach(roleInput => {
+                roleInput.addEventListener('change', function() {
+                    if (this.value === 'Perwakilan Kelas') {
+                        kelasSection.style.display = 'block';
+                        kodeGuruSection.style.display = 'none';
+                    } else if (this.value === 'Guru') {
+                        kodeGuruSection.style.display = 'block';
+                        kelasSection.style.display = 'none';
+                    } else {
+                        kelasSection.style.display = 'none';
+                        kodeGuruSection.style.display = 'none';
+                    }
+                });
+            });
+
+            // Pastikan dropdown tampil jika 'Perwakilan Kelas' atau 'Guru' sudah dipilih
+            const checkedRole = document.querySelector('input[name="role"]:checked');
+            if (checkedRole && checkedRole.value === 'Perwakilan Kelas') {
+                kelasSection.style.display = 'block';
+            } else if (checkedRole && checkedRole.value === 'Guru') {
+                kodeGuruSection.style.display = 'block';
+            }
+        });
+
     </script>
 </x-layout>

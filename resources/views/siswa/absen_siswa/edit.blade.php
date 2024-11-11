@@ -7,7 +7,8 @@
 
             <div class="form-group">
                 <label for="tgl" class="block text-sm font-medium text-gray-700">Tanggal</label>
-                <input type="date" class="mt-1 block w-full h-10 bg-gray-200 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-green-500 sm:text-sm @error('tgl') border-red-500 @enderror" id="tgl" name="tgl" value="{{ old('tgl', $absen_siswa->tgl) }}" style="padding-left: 10px;">
+                <input type="date" class="mt-1 block w-full h-10 bg-gray-200 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-green-500 sm:text-sm @error('tgl') border-red-500 @enderror" 
+                                id="tgl" name="tgl" value="{{ old('tgl', $absen_siswa->tgl) }}" style="padding-left: 10px;" readonly>
                 @error('tgl')
                     <p class="mt-2 text-sm text-red-600">{{ $message }}</p>
                 @enderror

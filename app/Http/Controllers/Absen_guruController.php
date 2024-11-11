@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Carbon;
 use App\Models\Absen_guru;
 use App\Models\Mapel;
 use App\Models\Kelas;
@@ -43,6 +44,13 @@ class Absen_guruController extends Controller
             $absenGuruQuery->whereDate('tgl', $filterDate);
         }
 
+        if (auth()->user()->role == 'Guru') {
+            $kodeGuru = auth()->user()->kode_guru;
+            $absenGuruQuery->whereHas('mapel', function ($query) use ($kodeGuru) {
+                $query->where('kode_guru', $kodeGuru);
+            });
+        }
+
         $absen_guru = $absenGuruQuery->get();
 
         return view('guru.absen_guru.absen_guru_kelas.index', compact('absen_guru', 'kelas', 'filterDate'), ['title' => $title . ' di Kelas ' . $kelas->kelas_id]);
@@ -53,10 +61,10 @@ class Absen_guruController extends Controller
      */
     public function create($kelas_id)
     {
-        $absen_guru = Absen_guru::all();
-        $mapel = Mapel::all();
+        $userKodeGuru = auth()->user()->kode_guru;
+        $mapel = Mapel::where('kode_guru', $userKodeGuru)->get();
         $kelas = Kelas::findOrFail($kelas_id);
-        return view('guru.absen_guru.absen_guru_kelas.create', compact('absen_guru', 'mapel', 'kelas_id'), ['title' => 'Tambah Absensi di Kelas ' . $kelas->kelas_id]);
+        return view('guru.absen_guru.absen_guru_kelas.create', compact('mapel', 'kelas_id'), ['title' => 'Tambah Absensi di Kelas ' . $kelas->kelas_id]);
     }
 
     /**
@@ -67,7 +75,11 @@ class Absen_guruController extends Controller
         // Validasi form input
         $request->validate([
             'mapel_id' => 'required',
-            'tgl' => 'required',
+            'tgl' => ['required', function ($attribute, $value, $fail) {
+                if ($value !== Carbon::today()->toDateString()) {
+                    $fail('Tanggal harus diisi dengan tanggal hari ini.');
+                }
+            }],
             'keterangan' => 'required',
             'tugas.*' => 'nullable|mimes:pdf|max:15360', // Validasi untuk setiap file tugas
         ]);
@@ -126,7 +138,8 @@ class Absen_guruController extends Controller
     public function edit(string $id)
     {
         $absen_guru = Absen_guru::findOrFail($id);
-        $mapel = Mapel::all();
+        $userKodeGuru = auth()->user()->kode_guru;
+        $mapel = Mapel::where('kode_guru', $userKodeGuru)->get();
         $kelas = Kelas::findOrFail($absen_guru->kelas_id);
         $kelas_id =  $kelas->id;
         return view('guru.absen_guru.absen_guru_kelas.edit', compact('absen_guru', 'mapel', 'kelas_id'), ['title' => 'Edit Absensi di Kelas ' . $kelas->kelas_id]);
@@ -139,7 +152,6 @@ class Absen_guruController extends Controller
     {
         $request->validate([
             'mapel_id' => 'required',
-            'tgl' => 'required',
             'keterangan' => 'required',
             'tugas.*' => 'nullable|mimes:pdf|max:15360', // Validasi untuk multiple files
         ]);
@@ -147,7 +159,7 @@ class Absen_guruController extends Controller
         $absen_guru = Absen_guru::findOrFail($id);
 
         $absen_guru->mapel_id = $request->mapel_id;
-        $absen_guru->tgl = $request->tgl;
+        // $absen_guru->tgl = $request->tgl;
         $absen_guru->kelas_id = $request->kelas_id;
         $absen_guru->keterangan = $request->keterangan;
 

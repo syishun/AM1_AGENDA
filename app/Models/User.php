@@ -15,6 +15,7 @@ class User extends Authenticatable
         'password',
         'role',
         'kelas_id',
+        'kode_guru',
     ];
 
     protected $hidden = [
@@ -24,6 +25,11 @@ class User extends Authenticatable
 
     public function kelas()
     {
-        return $this->belongsTo(Kelas::class);
+        return $this->belongsTo(Kelas::class, 'kelas_id');
+    }
+
+    public function data_guru()
+    {
+        return $this->belongsTo(Data_guru::class, 'kode_guru');
     }
 }

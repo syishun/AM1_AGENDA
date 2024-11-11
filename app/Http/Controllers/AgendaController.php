@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Carbon;
 use App\Models\Agenda;
 use App\Models\Kelas;
 use App\Models\Mapel;
@@ -27,12 +28,19 @@ class AgendaController extends Controller
         // Check for date filter
         $filterDate = $request->query('date');
 
-        // Fetch agenda items for the class, optionally filtering by date and ordering by the latest date
-        $agendaQuery = Agenda::where('kelas_id', $id)
-            ->orderBy('tgl', 'desc');
+        // Query agenda for the class, optionally filtering by date and kode_guru for teachers
+        $agendaQuery = Agenda::where('kelas_id', $id)->orderBy('tgl', 'desc');
 
         if ($filterDate) {
             $agendaQuery->whereDate('tgl', $filterDate);
+        }
+
+        // Filter agenda by kode_guru if the user is a teacher
+        if (auth()->user()->role == 'Guru') {
+            $kodeGuru = auth()->user()->kode_guru;
+            $agendaQuery->whereHas('mapel', function ($query) use ($kodeGuru) {
+                $query->where('kode_guru', $kodeGuru);
+            });
         }
 
         $agenda = $agendaQuery->get();
@@ -46,23 +54,26 @@ class AgendaController extends Controller
     // Ubah fungsi create agar menerima $kelas_id dari route.
     public function create($kelas_id)
     {
-        $mapel = Mapel::all();
+        $userKodeGuru = auth()->user()->kode_guru; // Ambil kode_guru dari user yang sedang login
+        $mapel = Mapel::where('kode_guru', $userKodeGuru)->get(); // Ambil mapel yang diajarkan oleh guru ini
         $kelas = Kelas::findOrFail($kelas_id);
+
         return view('guru.agenda.agenda_kelas.create', compact('mapel', 'kelas_id'), ['title' => 'Tambah Agenda Harian Kelas ' . $kelas->kelas_id]);
     }
 
-    // Ubah fungsi store agar tidak perlu menerima kelas_id dari input.
     public function store(Request $request)
     {
-        $request->validate(
-            [
-                'tgl' => 'required',
-                'mapel_id' => 'required',
-                'aktivitas' => 'required',
-                'jam_msk' => 'required',
-                'jam_keluar' => 'required',
-            ]
-        );
+        $request->validate([
+            'tgl' => ['required', function ($attribute, $value, $fail) {
+                if ($value !== Carbon::today()->toDateString()) {
+                    $fail('Tanggal harus diisi dengan tanggal hari ini.');
+                }
+            }],
+            'mapel_id' => 'required',
+            'aktivitas' => 'required',
+            'jam_msk' => 'required',
+            'jam_keluar' => 'required',
+        ]);
 
         $add = new Agenda;
         $add->tgl = $request->tgl;
@@ -90,9 +101,11 @@ class AgendaController extends Controller
     public function edit(string $id)
     {
         $agenda = Agenda::findOrFail($id);
-        $mapel = Mapel::all();
-        $kelas = Kelas::findOrFail($agenda->kelas_id);  // Fetch the full Kelas object
+        $userKodeGuru = auth()->user()->kode_guru; // Ambil kode_guru dari user yang sedang login
+        $mapel = Mapel::where('kode_guru', $userKodeGuru)->get(); // Ambil mapel yang diajarkan oleh guru ini
+        $kelas = Kelas::findOrFail($agenda->kelas_id);  // Ambil data kelas
         $kelas_id = $kelas->id;
+
         return view('guru.agenda.agenda_kelas.edit', compact('agenda', 'kelas_id', 'mapel'), ['title' => 'Edit Agenda Harian Kelas ' . $kelas->kelas_id]);
     }
 
@@ -102,7 +115,6 @@ class AgendaController extends Controller
     public function update(Request $request, string $id)
     {
         $request->validate([
-            'tgl' => 'required',
             'mapel_id' => 'required',
             'aktivitas' => 'required',
             'jam_msk' => 'required',
@@ -113,7 +125,7 @@ class AgendaController extends Controller
 
         // Ensure that 'kelas_id' is included in the request
         $agenda->kelas_id = $request->kelas_id;  // Check if 'kelas_id' is null here
-        $agenda->tgl = $request->tgl;
+        // $agenda->tgl = $request->tgl; // Komentar atau hapus baris ini untuk menjaga tanggal tetap
         $agenda->mapel_id = $request->mapel_id;
         $agenda->aktivitas = $request->aktivitas;
         $agenda->jam_msk = $request->jam_msk;

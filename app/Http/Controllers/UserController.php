@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\User;
 use App\Models\Kelas;
+use App\Models\Data_guru;
 use Illuminate\Support\Facades\Hash;
 
 class UserController extends Controller
@@ -33,16 +34,18 @@ class UserController extends Controller
 
         // Mendapatkan data kelas untuk dropdown (jika diperlukan)
         $kelas = Kelas::all();
+        $data_guru = Data_guru::all();
 
         // Menampilkan data ke view
-        return view('admin.user.index', compact('user', 'kelas'), ['title' => 'Data Pengguna']);
+        return view('admin.user.index', compact('user', 'kelas', 'data_guru'), ['title' => 'Data Pengguna']);
     }
 
     public function create()
     {
         $user = User::all();
         $kelas = Kelas::all();
-        return view('admin.user.create', compact('user', 'kelas'), ['title' => 'Tambah Pengguna']);
+        $data_guru = Data_guru::all();
+        return view('admin.user.create', compact('user', 'kelas', 'data_guru'), ['title' => 'Tambah Pengguna']);
     }
 
     public function store(Request $request)
@@ -52,6 +55,7 @@ class UserController extends Controller
             'password' => 'required|min:6',
             'role' => 'required',
             'kelas_id' => 'nullable|exists:kelas,id|required_if:role,Perwakilan Kelas',
+            'kode_guru' => 'nullable|exists:data_gurus,id|required_if:role,Guru',
         ]);
 
         // Pastikan kelas_id hanya bisa diisi oleh Perwakilan Kelas
@@ -59,11 +63,16 @@ class UserController extends Controller
             return redirect()->back()->withErrors(['kelas_id' => 'Kelas hanya dapat dipilih oleh pengguna dengan peran Perwakilan Kelas.']);
         }
 
+        if ($request->role !== 'Guru' && $request->filled('kode_guru')) {
+            return redirect()->back()->withErrors(['kode_guru' => 'Kode guru hanya dapat dipilih oleh pengguna dengan peran Guru.']);
+        }
+
         $add = new User;
         $add->name = $request->name;
         $add->password = Hash::make($request->password);
         $add->role = $request->role;
         $add->kelas_id = $request->kelas_id;
+        $add->kode_guru = $request->kode_guru;
 
         $add->save();
 
@@ -74,7 +83,8 @@ class UserController extends Controller
     {
         $user = User::findOrFail($id);
         $kelas = Kelas::all();
-        return view('admin.user.edit', compact('user', 'kelas'), ['title' => 'Edit Pengguna']);
+        $data_guru = Data_guru::all();
+        return view('admin.user.edit', compact('user', 'kelas', 'data_guru'), ['title' => 'Edit Pengguna']);
     }
 
     public function update(Request $request, string $id)
@@ -84,11 +94,16 @@ class UserController extends Controller
             'password' => 'nullable|min:6',
             'role' => 'required',
             'kelas_id' => 'nullable|exists:kelas,id|required_if:role,Perwakilan Kelas',
+            'kode_guru' => 'nullable|exists:data_gurus,id|required_if:role,Guru',
         ]);
 
         // Pastikan kelas_id hanya bisa diisi oleh Perwakilan Kelas
         if ($request->role !== 'Perwakilan Kelas' && $request->filled('kelas_id')) {
             return redirect()->back()->withErrors(['kelas_id' => 'Kelas hanya dapat dipilih oleh pengguna dengan peran Perwakilan Kelas.']);
+        }
+
+        if ($request->role !== 'Guru' && $request->filled('kode_guru')) {
+            return redirect()->back()->withErrors(['kode_guru' => 'Kode guru hanya dapat dipilih oleh pengguna dengan peran Guru.']);
         }
 
         $user = User::findOrFail($id);
@@ -100,6 +115,7 @@ class UserController extends Controller
 
         $user->role = $request->role;
         $user->kelas_id = $request->kelas_id;
+        $user->kode_guru = $request->kode_guru;
         $user->save();
 
         return redirect('user')->with('status', 'Data berhasil diupdate');

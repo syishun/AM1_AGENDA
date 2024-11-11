@@ -7,7 +7,9 @@
 
             <div class="form-group">
                 <label for="tgl" class="block text-sm font-medium text-gray-700">Tanggal</label>
-                <input type="date" class="mt-1 block w-full h-10 bg-gray-200 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-green-500 sm:text-sm @error('tgl') border-red-500 @enderror" id="tgl" name="tgl" value="{{ old('tgl') }}" style="padding-left: 10px;">
+                <input type="date" class="mt-1 block w-full h-10 bg-gray-200 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-green-500 sm:text-sm @error('tgl') border-red-500 @enderror" 
+                                id="tgl" name="tgl" value="{{ old('tgl', date('Y-m-d')) }}" 
+                                min="{{ date('Y-m-d') }}" max="{{ date('Y-m-d') }}" style="padding-left: 10px;">
                 @error('tgl')
                     <p class="mt-2 text-sm text-red-600">{{ $message }}</p>
                 @enderror
@@ -54,18 +56,17 @@
             </div>
         </form>
 
-    <script>
-        function toggleRadio(radio) {
-            if (radio.hasAttribute("data-waschecked")) {
-                radio.checked = false;
-                radio.removeAttribute("data-waschecked");
-            } else {
-                radio.setAttribute("data-waschecked", "true");
+        <script>
+            function toggleRadio(radio) {
+                if (radio.hasAttribute("data-waschecked")) {
+                    radio.checked = false;
+                    radio.removeAttribute("data-waschecked");
+                } else {
+                    radio.setAttribute("data-waschecked", "true");
+                }
             }
-        }
-    </script>
-    @endif
-    @if (Auth::user()->role == 'Admin')
+        </script>
+    @elseif (Auth::user()->role == 'Admin')
     <p class="text-center mt-4">Anda tidak memiliki hak untuk mengakses halaman ini.</p>
     @endif
 </x-layout>

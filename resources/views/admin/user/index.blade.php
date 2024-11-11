@@ -29,6 +29,7 @@
                         <th class="py-3 px-6">No</th>
                         <th class="py-3 px-6">Username</th>
                         <th class="py-3 px-6">Role</th>
+                        <th class="py-3 px-6">Kode</th>
                         <th class="py-3 px-6">Kelas</th>
                         <th class="py-3 px-6">Aksi</th>
                     </tr>
@@ -39,6 +40,13 @@
                         <td class="py-3 px-6">{{ $loop->iteration }}</td>
                         <td class="py-3 px-6 text-left">{{ $item->name }}</td>
                         <td class="py-3 px-6">{{ $item->role }}</td>
+                        <td class="py-3 px-6">
+                            @if($item->data_guru)
+                                {{ $item->data_guru->kode_guru }}
+                            @else
+                                -
+                            @endif
+                        </td>
                         <td class="py-3 px-6">
                             @if($item->kelas)
                                 {{ $item->kelas->kelas_id }}
