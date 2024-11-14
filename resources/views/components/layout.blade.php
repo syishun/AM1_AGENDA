@@ -50,7 +50,7 @@
         <div class="flex flex-grow justify-center text-center text-lg font-semibold  md:block">AM Agenda</div>
     
         <!-- Notifications -->
-        @if (Auth::user()->role == 'Perwakilan Kelas')
+        @if (Auth::user()->role == 'Sekretaris')
             <div class="relative">
                 <button @click="isNotificationOpen = !isNotificationOpen" class="relative rounded-full p-1 text-gray-300 hover:text-white focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-3 focus:ring-offset-gray-800">
                     <span class="sr-only">View notifications</span>

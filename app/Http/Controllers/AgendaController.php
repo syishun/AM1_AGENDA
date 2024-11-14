@@ -25,8 +25,7 @@ class AgendaController extends Controller
         // Fetch class details
         $kelas = Kelas::find($id);
 
-        // Check for date filter
-        $filterDate = $request->query('date');
+        $filterDate = $request->query('date') ?? Carbon::today()->toDateString();
 
         // Query agenda for the class, optionally filtering by date and kode_guru for teachers
         $agendaQuery = Agenda::where('kelas_id', $id)->orderBy('tgl', 'desc');
@@ -45,7 +44,7 @@ class AgendaController extends Controller
 
         $agenda = $agendaQuery->get();
 
-        return view('guru.agenda.agenda_kelas.index', compact('agenda', 'kelas', 'filterDate'), ['title' => 'Agenda Harian Kelas ' . $kelas->kelas_id]);
+        return view('guru.agenda.agenda_kelas.index', compact('agenda', 'kelas', 'filterDate'), ['title' => 'Agenda Harian Kelas ' . $kelas->kelas . ' ' . $kelas->jurusan->jurusan_id . ' ' . $kelas->kelas_id]);
     }
 
     /**
@@ -58,7 +57,7 @@ class AgendaController extends Controller
         $mapel = Mapel::where('kode_guru', $userKodeGuru)->get(); // Ambil mapel yang diajarkan oleh guru ini
         $kelas = Kelas::findOrFail($kelas_id);
 
-        return view('guru.agenda.agenda_kelas.create', compact('mapel', 'kelas_id'), ['title' => 'Tambah Agenda Harian Kelas ' . $kelas->kelas_id]);
+        return view('guru.agenda.agenda_kelas.create', compact('mapel', 'kelas_id'), ['title' => 'Tambah Agenda Harian Kelas ' . $kelas->kelas . ' ' . $kelas->jurusan->jurusan_id . ' ' . $kelas->kelas_id]);
     }
 
     public function store(Request $request)
@@ -69,7 +68,7 @@ class AgendaController extends Controller
                     $fail('Tanggal harus diisi dengan tanggal hari ini.');
                 }
             }],
-            'mapel_id' => 'required',
+            'nama_mapel' => 'required',
             'aktivitas' => 'required',
             'jam_msk' => 'required',
             'jam_keluar' => 'required',
@@ -78,7 +77,7 @@ class AgendaController extends Controller
         $add = new Agenda;
         $add->tgl = $request->tgl;
         $add->kelas_id = $request->kelas_id; // Kelas akan disimpan langsung dari parameter request
-        $add->mapel_id = $request->mapel_id;
+        $add->nama_mapel = $request->nama_mapel;
         $add->aktivitas = $request->aktivitas;
         $add->jam_msk = $request->jam_msk;
         $add->jam_keluar = $request->jam_keluar;
@@ -106,7 +105,7 @@ class AgendaController extends Controller
         $kelas = Kelas::findOrFail($agenda->kelas_id);  // Ambil data kelas
         $kelas_id = $kelas->id;
 
-        return view('guru.agenda.agenda_kelas.edit', compact('agenda', 'kelas_id', 'mapel'), ['title' => 'Edit Agenda Harian Kelas ' . $kelas->kelas_id]);
+        return view('guru.agenda.agenda_kelas.edit', compact('agenda', 'kelas_id', 'mapel'), ['title' => 'Edit Agenda Harian Kelas ' . $kelas->kelas . ' ' . $kelas->jurusan->jurusan_id . ' ' . $kelas->kelas_id]);
     }
 
     /**
@@ -115,7 +114,7 @@ class AgendaController extends Controller
     public function update(Request $request, string $id)
     {
         $request->validate([
-            'mapel_id' => 'required',
+            'nama_mapel' => 'required',
             'aktivitas' => 'required',
             'jam_msk' => 'required',
             'jam_keluar' => 'required',
@@ -126,7 +125,7 @@ class AgendaController extends Controller
         // Ensure that 'kelas_id' is included in the request
         $agenda->kelas_id = $request->kelas_id;  // Check if 'kelas_id' is null here
         // $agenda->tgl = $request->tgl; // Komentar atau hapus baris ini untuk menjaga tanggal tetap
-        $agenda->mapel_id = $request->mapel_id;
+        $agenda->nama_mapel = $request->nama_mapel;
         $agenda->aktivitas = $request->aktivitas;
         $agenda->jam_msk = $request->jam_msk;
         $agenda->jam_keluar = $request->jam_keluar;

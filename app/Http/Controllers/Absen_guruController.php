@@ -33,16 +33,13 @@ class Absen_guruController extends Controller
         // Set the title based on the user's role
         $title = ($userRole === 'Guru' || $userRole === 'Admin') ? 'Absensi' : 'Tugas';
 
-        // Check for date filter
-        $filterDate = $request->query('date');
+        // Check for date filter or default to today's date
+        $filterDate = $request->query('date') ?? Carbon::today()->toDateString();
 
-        // Fetch attendance records for the class, optionally filtering by date and ordering by the latest date
+        // Fetch attendance records for the class, filtering by date and ordering by the latest date
         $absenGuruQuery = Absen_guru::where('kelas_id', $id)
+            ->whereDate('tgl', $filterDate)
             ->orderBy('tgl', 'desc');
-
-        if ($filterDate) {
-            $absenGuruQuery->whereDate('tgl', $filterDate);
-        }
 
         if (auth()->user()->role == 'Guru') {
             $kodeGuru = auth()->user()->kode_guru;
@@ -53,7 +50,7 @@ class Absen_guruController extends Controller
 
         $absen_guru = $absenGuruQuery->get();
 
-        return view('guru.absen_guru.absen_guru_kelas.index', compact('absen_guru', 'kelas', 'filterDate'), ['title' => $title . ' di Kelas ' . $kelas->kelas_id]);
+        return view('guru.absen_guru.absen_guru_kelas.index', compact('absen_guru', 'kelas', 'filterDate'), ['title' => $title . ' di Kelas ' . $kelas->kelas . ' ' . $kelas->jurusan->jurusan_id . ' ' . $kelas->kelas_id]);
     }
 
     /**
@@ -64,7 +61,7 @@ class Absen_guruController extends Controller
         $userKodeGuru = auth()->user()->kode_guru;
         $mapel = Mapel::where('kode_guru', $userKodeGuru)->get();
         $kelas = Kelas::findOrFail($kelas_id);
-        return view('guru.absen_guru.absen_guru_kelas.create', compact('mapel', 'kelas_id'), ['title' => 'Tambah Absensi di Kelas ' . $kelas->kelas_id]);
+        return view('guru.absen_guru.absen_guru_kelas.create', compact('mapel', 'kelas_id'), ['title' => 'Tambah Absensi di Kelas ' . $kelas->kelas . ' ' . $kelas->jurusan->jurusan_id . ' ' . $kelas->kelas_id]);
     }
 
     /**
@@ -74,7 +71,7 @@ class Absen_guruController extends Controller
     {
         // Validasi form input
         $request->validate([
-            'mapel_id' => 'required',
+            'nama_mapel' => 'required',
             'tgl' => ['required', function ($attribute, $value, $fail) {
                 if ($value !== Carbon::today()->toDateString()) {
                     $fail('Tanggal harus diisi dengan tanggal hari ini.');
@@ -85,7 +82,7 @@ class Absen_guruController extends Controller
         ]);
 
         $absen_guru = new Absen_guru;
-        $absen_guru->mapel_id = $request->mapel_id;
+        $absen_guru->nama_mapel = $request->nama_mapel;
         $absen_guru->tgl = $request->tgl;
         $absen_guru->kelas_id = $request->kelas_id;
         $absen_guru->keterangan = $request->keterangan;
@@ -112,8 +109,8 @@ class Absen_guruController extends Controller
             'link' => url('/absen_guru/kelas/' . $request->kelas_id),
         ];
 
-        // Kirim notifikasi ke perwakilan kelas
-        $users = User::where('role', 'Perwakilan Kelas')
+        // Kirim notifikasi ke Sekretaris
+        $users = User::where('role', 'Sekretaris')
             ->where('kelas_id', $request->kelas_id)
             ->get();
 
@@ -142,7 +139,7 @@ class Absen_guruController extends Controller
         $mapel = Mapel::where('kode_guru', $userKodeGuru)->get();
         $kelas = Kelas::findOrFail($absen_guru->kelas_id);
         $kelas_id =  $kelas->id;
-        return view('guru.absen_guru.absen_guru_kelas.edit', compact('absen_guru', 'mapel', 'kelas_id'), ['title' => 'Edit Absensi di Kelas ' . $kelas->kelas_id]);
+        return view('guru.absen_guru.absen_guru_kelas.edit', compact('absen_guru', 'mapel', 'kelas_id'), ['title' => 'Edit Absensi di Kelas ' . $kelas->kelas . ' ' . $kelas->jurusan->jurusan_id . ' ' . $kelas->kelas_id]);
     }
 
     /**
@@ -151,14 +148,14 @@ class Absen_guruController extends Controller
     public function update(Request $request, string $id)
     {
         $request->validate([
-            'mapel_id' => 'required',
+            'nama_mapel' => 'required',
             'keterangan' => 'required',
             'tugas.*' => 'nullable|mimes:pdf|max:15360', // Validasi untuk multiple files
         ]);
 
         $absen_guru = Absen_guru::findOrFail($id);
 
-        $absen_guru->mapel_id = $request->mapel_id;
+        $absen_guru->nama_mapel = $request->nama_mapel;
         // $absen_guru->tgl = $request->tgl;
         $absen_guru->kelas_id = $request->kelas_id;
         $absen_guru->keterangan = $request->keterangan;

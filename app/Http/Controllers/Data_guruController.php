@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Data_guru;
+use App\Models\Mapel;
 
 class Data_guruController extends Controller
 {
@@ -15,16 +16,14 @@ class Data_guruController extends Controller
         // Ambil query pencarian dari request
         $search = $request->input('search');
 
-        // Jika ada query pencarian, filter data_guru berdasarkan nama
-        if ($search) {
-            $data_guru = Data_guru::where('nama_guru', 'LIKE', "%{$search}%")->get();
-        } else {
-            // Jika tidak ada query pencarian, ambil semua data guru
-            $data_guru = Data_guru::all();
-        }
+        $data_guru = Data_guru::with('mapels')
+            ->when($search, function ($query, $search) {
+                return $query->where('nama_guru', 'LIKE', "%{$search}%");
+            })
+            ->get();
 
-        // Sorting custom (seperti sebelumnya)
-        $data_guru = $data_guru->toArray(); // Convert collection to array for sorting
+        // Convert to array for sorting if needed and re-collect after sorting
+        $data_guru = $data_guru->toArray();
 
         usort($data_guru, function ($a, $b) {
             // Pisahkan angka dan huruf dari kode_guru
@@ -52,7 +51,8 @@ class Data_guruController extends Controller
     public function create()
     {
         $data_guru = Data_guru::all();
-        return view('admin.data_guru.create', compact('data_guru'), ['title' => 'Tambah Data Guru']);
+        $mapel = Mapel::all();
+        return view('admin.data_guru.create', compact('data_guru', 'mapel'), ['title' => 'Tambah Data Guru']);
     }
 
     /**
@@ -60,26 +60,18 @@ class Data_guruController extends Controller
      */
     public function store(Request $request)
     {
-        $request->validate(
-            [
-                'nama_guru' => 'required',
-                'kode_guru' => 'required',
-                'gender' => 'required',
-            ],
-            [
-                'nama_guru' => 'Nama guru tidak boleh kosong',
-                'kode_guru' => 'Kode guru tidak boleh kosong',
-                'gender' => 'Gender tidak boleh kosong',
-            ]
-        );
+        $request->validate([
+            'nama_guru' => 'required',
+            'kode_guru' => 'required',
+            'gender' => 'required',
+            'mapel_ids' => 'required|array', // Ensure it's an array of subject IDs
+        ]);
 
-        $add = new Data_guru;
+        $data_guru = Data_guru::create($request->only(['nama_guru', 'kode_guru', 'gender']));
 
-        $add->nama_guru = $request->nama_guru;
-        $add->kode_guru = $request->kode_guru;
-        $add->gender = $request->gender;
+        // Attach multiple subjects (mapel)
+        $data_guru->mapels()->attach($request->mapel_ids);
 
-        $add->save();
         return redirect('data_guru')->with('status', 'Data berhasil ditambah');
     }
 
@@ -96,8 +88,9 @@ class Data_guruController extends Controller
      */
     public function edit(string $id)
     {
-        $data_guru = Data_guru::findOrFail($id);
-        return view('admin.data_guru.edit', compact('data_guru'),  ['title' => 'Edit Data Guru']);
+        $data_guru = Data_guru::with('mapels')->findOrFail($id);
+        $mapel = Mapel::all();
+        return view('admin.data_guru.edit', compact('data_guru', 'mapel'),  ['title' => 'Edit Data Guru']);
     }
 
     /**
@@ -109,15 +102,14 @@ class Data_guruController extends Controller
             'nama_guru' => 'required',
             'kode_guru' => 'required',
             'gender' => 'required',
+            'mapel_ids' => 'required|array', // Ensure it's an array of subject IDs
         ]);
 
         $data_guru = Data_guru::findOrFail($id);
+        $data_guru->update($request->only(['nama_guru', 'kode_guru', 'gender']));
 
-        $data_guru->nama_guru = $request->nama_guru;
-        $data_guru->kode_guru = $request->kode_guru;
-        $data_guru->gender = $request->gender;
-
-        $data_guru->save();
+        // Sync subjects (mapels)
+        $data_guru->mapels()->sync($request->mapel_ids);
 
         return redirect('data_guru')->with('status', 'Data berhasil diupdate');
     }

@@ -13,36 +13,22 @@ class MapelController extends Controller
      */
     public function index(Request $request)
     {
-        $search = $request->input('search'); // Ambil input pencarian
+        $search = $request->input('search');
 
-        // Query untuk mendapatkan data dengan relasi data_guru
-        $mapel = Mapel::with('data_guru')
+        // Ambil data mapel dengan data guru terkait, termasuk pencarian
+        $mapel = Mapel::with(['dataGurus' => function ($query) {
+            // Order guru berdasarkan kode_guru
+            $query->orderByRaw("CAST(SUBSTRING_INDEX(kode_guru, '-', 1) AS UNSIGNED), SUBSTRING_INDEX(kode_guru, '-', -1)");
+        }])
             ->when($search, function ($query, $search) {
-                // Filter berdasarkan nama guru atau nama mapel
-                $query->whereHas('data_guru', function ($query) use ($search) {
-                    $query->where('nama_guru', 'like', '%' . $search . '%');
-                })->orWhere('nama_mapel', 'like', '%' . $search . '%');
+                $query->where('nama_mapel', 'like', '%' . $search . '%')
+                    ->orWhereHas('dataGurus', function ($query) use ($search) {
+                        $query->where('nama_guru', 'like', '%' . $search . '%');
+                    });
             })
             ->get();
 
-        // Convert ke array dan sort berdasarkan kode_guru
-        $mapelArray = $mapel->toArray();
-
-        usort($mapelArray, function ($a, $b) {
-            preg_match('/(\d+)([a-z]*)/', $a['data_guru']['kode_guru'], $matchesA);
-            preg_match('/(\d+)([a-z]*)/', $b['data_guru']['kode_guru'], $matchesB);
-
-            if ($matchesA[1] == $matchesB[1]) {
-                return strcmp($matchesA[2], $matchesB[2]);
-            }
-
-            return $matchesA[1] - $matchesB[1];
-        });
-
-        // Convert kembali ke koleksi setelah sorting
-        $mapelSorted = collect($mapelArray);
-
-        return view('admin.mapel.index', compact('mapelSorted'), ['title' => 'Mata Pelajaran']);
+        return view('admin.mapel.index', compact('mapel'), ['title' => 'Mata Pelajaran']);
     }
 
     /**
@@ -50,16 +36,7 @@ class MapelController extends Controller
      */
     public function create()
     {
-        // Ambil semua data_guru dan urutkan berdasarkan kode_guru
-        $data_guru = Data_guru::all()->sortBy(function ($guru) {
-            // Pisahkan angka dan huruf dari kode_guru
-            preg_match('/(\d+)([a-z]*)/', $guru->kode_guru, $matches);
-            return [
-                (int) $matches[1], // Urutkan berdasarkan angka
-                $matches[2],       // Urutkan berdasarkan huruf
-            ];
-        });
-
+        $data_guru = Data_guru::all();
         return view('admin.mapel.create', compact('data_guru'), ['title' => 'Tambah Mata Pelajaran']);
     }
 
@@ -68,26 +45,19 @@ class MapelController extends Controller
      */
     public function store(Request $request)
     {
-        $request->validate(
-            [
-                'nama_mapel' => 'required',
-                'kode_guru' => 'required',
-                'mapel_id' => 'required',
-            ],
-            [
-                'nama_mapel' => 'Nama mapel tidak boleh kosong',
-                'kode_guru' => 'Kode guru tidak boleh kosong',
-                'mapel_id' => 'ID mapel tidak boleh kosong',
-            ]
-        );
+        $request->validate([
+            'nama_mapel' => 'required',
+        ]);
 
-        $add = new Mapel;
+        $mapel = new Mapel;
+        $mapel->nama_mapel = $request->nama_mapel;
+        $mapel->save();
 
-        $add->nama_mapel = $request->nama_mapel;
-        $add->kode_guru = $request->kode_guru;
-        $add->mapel_id = $request->mapel_id;
+        // Cek apakah ada guru yang dipilih untuk ditambahkan, jika tidak, lewati proses attach
+        if ($request->filled('data_guru_ids')) {
+            $mapel->dataGurus()->attach($request->data_guru_ids);
+        }
 
-        $add->save();
         return redirect('mapel')->with('status', 'Data berhasil ditambah');
     }
 
@@ -104,15 +74,8 @@ class MapelController extends Controller
      */
     public function edit(string $id)
     {
-        $mapel = Mapel::findOrFail($id);
-        $data_guru = Data_guru::all()->sortBy(function ($guru) {
-            // Pisahkan angka dan huruf dari kode_guru
-            preg_match('/(\d+)([a-z]*)/', $guru->kode_guru, $matches);
-            return [
-                (int) $matches[1], // Urutkan berdasarkan angka
-                $matches[2],       // Urutkan berdasarkan huruf
-            ];
-        });
+        $mapel = Mapel::with('dataGurus')->findOrFail($id);
+        $data_guru = Data_guru::all();
         return view('admin.mapel.edit', compact('mapel', 'data_guru'), ['title' => 'Edit Mata Pelajaran']);
     }
 
@@ -123,15 +86,10 @@ class MapelController extends Controller
     {
         $request->validate([
             'nama_mapel' => 'required',
-            'kode_guru' => 'required',
-            'mapel_id' => 'required',
         ]);
 
         $mapel = Mapel::findOrFail($id);
-
         $mapel->nama_mapel = $request->nama_mapel;
-        $mapel->kode_guru = $request->kode_guru;
-        $mapel->mapel_id = $request->mapel_id;
         $mapel->save();
 
         return redirect('mapel')->with('status', 'Data berhasil diupdate');

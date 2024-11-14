@@ -9,29 +9,6 @@
                 @csrf
 
                 <div>
-                    <label for="name" class="block text-sm font-medium text-gray-700">Name</label>
-                    <input type="text" class="mt-1 block w-full h-10 bg-gray-200 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-green-500 sm:text-sm @error('name') border-red-500 @enderror" id="name" name="name" value="{{ old('name') }}" style="padding-left: 10px;">
-                    @error('name')
-                        <p class="mt-2 text-sm text-red-600">{{ $message }}</p>
-                    @enderror
-                </div>
-
-                <div>
-                    <label for="password" class="block text-sm font-medium text-gray-700">Password</label>
-                    <div class="relative">
-                        <input type="password" class="mt-1 block w-full h-10 bg-gray-200 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-green-500 sm:text-sm @error('password') border-red-500 @enderror" id="password" name="password" value="{{ old('password') }}" style="padding-left: 10px;">
-                        
-                        <!-- Eye Icon -->
-                        <span class="absolute inset-y-0 right-3 flex items-center cursor-pointer" onclick="togglePasswordVisibility('password', 'togglePasswordIcon')">
-                            <i id="togglePasswordIcon" class="fas fa-eye text-gray-600"></i>
-                        </span>
-                    </div>
-                    @error('password')
-                        <p class="mt-2 text-sm text-red-600">{{ $message }}</p>
-                    @enderror
-                </div>
-
-                <div>
                     <label for="role" class="block text-sm font-medium text-gray-700">Role</label>
                     <div class="mt-2 flex items-center space-x-4 gap-2">
                         <div>
@@ -49,10 +26,10 @@
                             </label>
                         </div>
                         <div>
-                            <!-- Perwakilan Kelas Role with Icon -->
-                            <input type="radio" id="role_perwakilan_kelas" name="role" value="Perwakilan Kelas" {{ old('role') == 'Perwakilan Kelas' ? 'checked' : '' }} class="text-green-500 focus:ring-green-500">
+                            <!-- Sekretaris Role with Icon -->
+                            <input type="radio" id="role_perwakilan_kelas" name="role" value="Sekretaris" {{ old('role') == 'Sekretaris' ? 'checked' : '' }} class="text-green-500 focus:ring-green-500">
                             <label for="role_perwakilan_kelas" class="text-sm text-gray-700">
-                                <i class="fas fa-users mr-2"></i> Perwakilan Kelas
+                                <i class="fas fa-users mr-2"></i> Sekretaris
                             </label>
                         </div>
                     </div>
@@ -80,10 +57,33 @@
                     <select class="mt-1 block w-full h-10 bg-gray-200 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-green-500 sm:text-sm @error('kelas_id') border-red-500 @enderror" name="kelas_id" id="kelas_id" style="padding-left: 10px;">
                         <option value="">--Pilih--</option>
                         @foreach ($kelas as $item)
-                            <option value="{{ $item->id }}">{{ $item->kelas_id }}</option>
+                            <option value="{{ $item->id }}">{{ $item->kelas }} {{ $item->jurusan->jurusan_id }} {{ $item->kelas_id }} ({{ $item->thn_ajaran }})</option>
                         @endforeach
                     </select>
                     @error('kelas_id')
+                        <p class="mt-2 text-sm text-red-600">{{ $message }}</p>
+                    @enderror
+                </div>
+
+                <div>
+                    <label for="name" class="block text-sm font-medium text-gray-700">Name</label>
+                    <input type="text" class="mt-1 block w-full h-10 bg-gray-200 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-green-500 sm:text-sm @error('name') border-red-500 @enderror" id="name" name="name" value="{{ old('name') }}" style="padding-left: 10px;">
+                    @error('name')
+                        <p class="mt-2 text-sm text-red-600">{{ $message }}</p>
+                    @enderror
+                </div>
+
+                <div>
+                    <label for="password" class="block text-sm font-medium text-gray-700">Password</label>
+                    <div class="relative">
+                        <input type="password" class="mt-1 block w-full h-10 bg-gray-200 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-green-500 sm:text-sm @error('password') border-red-500 @enderror" id="password" name="password" value="{{ old('password') }}" style="padding-left: 10px;">
+                        
+                        <!-- Eye Icon -->
+                        <span class="absolute inset-y-0 right-3 flex items-center cursor-pointer" onclick="togglePasswordVisibility('password', 'togglePasswordIcon')">
+                            <i id="togglePasswordIcon" class="fas fa-eye text-gray-600"></i>
+                        </span>
+                    </div>
+                    @error('password')
                         <p class="mt-2 text-sm text-red-600">{{ $message }}</p>
                     @enderror
                 </div>
@@ -105,7 +105,7 @@
 
             roleInputs.forEach(roleInput => {
                 roleInput.addEventListener('change', function() {
-                    if (this.value === 'Perwakilan Kelas') {
+                    if (this.value === 'Sekretaris') {
                         kelasSection.style.display = 'block';
                     } else {
                         kelasSection.style.display = 'none';
@@ -113,9 +113,9 @@
                 });
             });
 
-            // Pastikan kelas select muncul jika role 'Perwakilan Kelas' sudah dipilih pada awal load
+            // Pastikan kelas select muncul jika role 'Sekretaris' sudah dipilih pada awal load
             const checkedRole = document.querySelector('input[name="role"]:checked');
-            if (checkedRole && checkedRole.value === 'Perwakilan Kelas') {
+            if (checkedRole && checkedRole.value === 'Sekretaris') {
                 kelasSection.style.display = 'block';
             }
         });

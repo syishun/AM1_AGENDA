@@ -19,7 +19,7 @@ class Absen_guru extends Model
 
     public function mapel()
     {
-        return $this->belongsTo('App\Models\Mapel', 'mapel_id', 'id');
+        return $this->belongsTo('App\Models\Mapel', 'nama_mapel', 'id');
     }
 
     public function kelas()
@@ -29,7 +29,7 @@ class Absen_guru extends Model
 
     protected $fillable = [
         'kode_guru',
-        'mapel_id',
+        'nama_mapel',
         'tgl',
         'kelas_id',
         'keterangan',

@@ -14,8 +14,10 @@ return new class extends Migration
         Schema::create('users', function (Blueprint $table) {
             $table->id();
             $table->string('name')->unique(); // Kolom username, tidak ada email
+            $table->rememberToken();
             $table->string('password');
             $table->bigInteger('kelas_id')->unsigned()->nullable(); // Kelas ID bisa null
+            $table->bigInteger('kode_guru')->unsigned()->nullable(); // Kelas ID bisa null
             $table->string('role'); // Menambahkan kolom role
             $table->timestamps();
         });

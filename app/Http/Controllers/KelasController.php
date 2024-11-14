@@ -4,39 +4,53 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Kelas;
+use App\Models\Jurusan;
 
 class KelasController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
-    public function index(Request $request)
+    // public function index(Request $request)
+    // {
+    //     $filterKelas = $request->get('filterKelas');
+    //     $kelasQuery = Kelas::with('jurusan'); // Load the jurusan relationship
+    //     $kelas = Kelas::with('jurusan')->get();
+
+    //     if (!empty($filterKelas)) {
+    //         $kelasQuery->where('kelas', $filterKelas);
+    //     }
+
+    //     $kelas = $kelasQuery->get();
+
+    //     $jurusan = Jurusan::all();
+
+    //     return view('admin.kelas.index', compact('kelas', 'jurusan'), ['title' => 'Data Kelas & Jurusan']);
+    // }
+
+    public function kelasByJurusan($id)
     {
-        // Mendapatkan data filter dari request
-        $filterKelas = $request->get('filterKelas');
+        $jurusan = Jurusan::findOrFail($id);
 
-        // Query awal
-        $kelasQuery = Kelas::query();
+        // Urutkan berdasarkan kelas ('X', 'XI', 'XII') dan kelas_id dari kecil ke besar
+        $kelas = Kelas::where('jurusan_id', $id)
+            ->with('jurusan')
+            ->orderByRaw("FIELD(kelas, 'X', 'XI', 'XII')")
+            ->orderBy('kelas_id', 'asc')
+            ->get();
 
-        // Jika filter kelas tidak kosong
-        if (!empty($filterKelas)) {
-            $kelasQuery->where('kelas', $filterKelas);
-        }
-
-        // Eksekusi query dan dapatkan hasil
-        $kelas = $kelasQuery->get();
-
-        // Menampilkan data ke view
-        return view('admin.kelas.index', compact('kelas'), ['title' => 'Data Kelas']);
+        return view('admin.kelas.index', compact('kelas', 'jurusan'))
+            ->with('title', 'Data Kelas untuk Jurusan ' . $jurusan->jurusan_id);
     }
 
     /**
      * Show the form for creating a new resource.
      */
-    public function create()
+    public function create(Request $request)
     {
-        $kelas = Kelas::all();
-        return view('admin.kelas.create', compact('kelas'), ['title' => 'Tambah Data Kelas']);
+        $jurusanId = $request->query('jurusan');
+        $jurusan = Jurusan::findOrFail($jurusanId);
+        return view('admin.kelas.create', compact('jurusan'))->with('title', 'Tambah Data Kelas untuk Jurusan ' . $jurusan->jurusan_id);
     }
 
     /**
@@ -47,25 +61,27 @@ class KelasController extends Controller
         $request->validate(
             [
                 'kelas' => 'required',
-                'angkatan' => 'required|integer|min:1',
+                'thn_ajaran' => 'required',
                 'kelas_id' => 'required',
+                'jurusan' => 'required',
             ],
             [
-                'kelas' => 'Kelas tidak boleh kosong',
-                'angkatan.required' => 'Angkatan tidak boleh kosong',
-                'angkatan.min' => 'Angkatan harus lebih besar atau sama dengan 1',
-                'kelas_id' => 'ID kelas tidak boleh kosong',
+                'kelas.required' => 'Kelas tidak boleh kosong',
+                'thn_ajaran.required' => 'Tahun ajaran tidak boleh kosong',
+                'kelas_id.required' => 'No kelas tidak boleh kosong',
+                'jurusan.required' => 'Jurusan tidak boleh kosong',
             ]
         );
 
         $add = new Kelas;
-
         $add->kelas = $request->kelas;
-        $add->angkatan = $request->angkatan;
+        $add->thn_ajaran = $request->thn_ajaran;
         $add->kelas_id = $request->kelas_id;
+        $add->jurusan_id = $request->jurusan; // perbaiki ke jurusan_id
 
         $add->save();
-        return redirect('kelas')->with('status', 'Data berhasil ditambah');
+
+        return redirect('jurusan/' . $add->jurusan_id . '/kelas')->with('status', 'Data berhasil ditambah');
     }
 
     /**
@@ -82,7 +98,8 @@ class KelasController extends Controller
     public function edit(string $id)
     {
         $kelas = Kelas::findOrFail($id);
-        return view('admin.kelas.edit', compact('kelas'),  ['title' => 'Edit Data Kelas']);
+        $jurusan = Jurusan::all();
+        return view('admin.kelas.edit', compact('kelas', 'jurusan'),  ['title' => 'Edit Data Kelas']);
     }
 
     /**
@@ -92,24 +109,23 @@ class KelasController extends Controller
     {
         $request->validate([
             'kelas' => 'required',
-            'angkatan' => 'required|integer|min:1',
+            'thn_ajaran' => 'required',
             'kelas_id' => 'required',
         ], [
             'kelas' => 'Kelas tidak boleh kosong',
-            'angkatan.required' => 'Angkatan tidak boleh kosong',
-            'angkatan.min' => 'Angkatan harus lebih besar atau sama dengan 1',
-            'kelas_id' => 'ID kelas tidak boleh kosong',
+            'thn_ajaran' => 'Tahun ajaran tidak boleh kosong',
+            'kelas_id' => 'No kelas tidak boleh kosong',
         ]);
 
         $kelas = Kelas::findOrFail($id);
 
         $kelas->kelas = $request->kelas;
-        $kelas->angkatan = $request->angkatan;
+        $kelas->thn_ajaran = $request->thn_ajaran;
         $kelas->kelas_id = $request->kelas_id;
 
         $kelas->save();
 
-        return redirect('kelas')->with('status', 'Data berhasil diupdate');
+        return redirect('jurusan/' . $kelas->jurusan_id . '/kelas')->with('status', 'Data berhasil diupdate');
     }
 
     /**
@@ -118,8 +134,9 @@ class KelasController extends Controller
     public function destroy(string $id)
     {
         $kelas = Kelas::findOrFail($id);
+        $jurusanId = $kelas->jurusan_id;
         $kelas->delete();
 
-        return redirect('kelas')->with('status', 'Data berhasil dihapus');
+        return redirect('jurusan/' . $jurusanId . '/kelas')->with('status', 'Data berhasil dihapus');
     }
 }

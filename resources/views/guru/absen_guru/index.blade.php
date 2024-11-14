@@ -2,7 +2,7 @@
     <x-slot:title>{{$title}}</x-slot:title>
 
     @if($kelas->isEmpty())
-        <p class="text-center mt-4 text-green-50">Petugas belum menambahkan kelas.</p>
+        <p class="text-center mt-4">Petugas belum menambahkan kelas.</p>
     @else
     <div class="container mx-auto my-8">
         <div class="flex justify-center">
@@ -17,7 +17,7 @@
                 @foreach ($kelas as $item)
                     @if (Str::startsWith(trim($item->kelas), 'X') && !Str::startsWith(trim($item->kelas), 'XI') && !Str::startsWith(trim($item->kelas), 'XII'))
                         <a href="{{ url('absen_guru/kelas/' . $item->id) }}" class="block text-center py-4 bg-green-500 text-white rounded-lg shadow-md hover:bg-green-600 transition duration-300">
-                            {{ $item->kelas_id }}
+                            {{ $item->kelas }} {{ $item->jurusan->jurusan_id }} {{ $item->kelas_id }} ({{ $item->thn_ajaran }})
                         </a>
                     @endif
                 @endforeach
@@ -31,7 +31,7 @@
                 @foreach ($kelas as $item)
                     @if (Str::startsWith(trim($item->kelas), 'XI') && !Str::startsWith(trim($item->kelas), 'XII'))
                         <a href="{{ url('absen_guru/kelas/' . $item->id) }}" class="block text-center py-4 bg-green-500 text-white rounded-lg shadow-md hover:bg-green-600 transition duration-300">
-                            {{ $item->kelas_id }}
+                            {{ $item->kelas }} {{ $item->jurusan->jurusan_id }} {{ $item->kelas_id }} ({{ $item->thn_ajaran }})
                         </a>
                     @endif
                 @endforeach
@@ -45,7 +45,7 @@
                 @foreach ($kelas as $item)
                     @if (Str::startsWith(trim($item->kelas), 'XII'))
                         <a href="{{ url('absen_guru/kelas/' . $item->id) }}" class="block text-center py-4 bg-green-500 text-white rounded-lg shadow-md hover:bg-green-600 transition duration-300">
-                            {{ $item->kelas_id }}
+                            {{ $item->kelas }} {{ $item->jurusan->jurusan_id }} {{ $item->kelas_id }} ({{ $item->thn_ajaran }})
                         </a>
                     @endif
                 @endforeach

@@ -33,7 +33,7 @@ class AuthController extends Controller
                     return redirect()->route('admin.index');
                 case 'Guru':
                     return redirect()->route('guru.index');
-                case 'Perwakilan Kelas':
+                case 'Sekretaris':
                     return redirect()->route('siswa.index');
                 default:
                     return redirect('/');

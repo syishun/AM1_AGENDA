@@ -18,7 +18,7 @@ class SendAbsensiNotification implements ShouldQueue
         $kelas_id = $event->absen_guru->kelas_id;
 
         // Temukan semua siswa di kelas yang bersangkutan
-        $siswa = User::where('role', 'Perwakilan Kelas')->where('kelas_id', $kelas_id)->get();
+        $siswa = User::where('role', 'Sekretaris')->where('kelas_id', $kelas_id)->get();
 
         // Kirim notifikasi ke setiap siswa
         foreach ($siswa as $s) {

@@ -46,6 +46,21 @@
                 </div>
 
                 <div>
+                    <label for="mata_pelajaran" class="block text-sm font-medium text-gray-700">Mata Pelajaran</label>
+                    <div class="mt-2 space-y-2">
+                        @foreach($mapel as $item)
+                            <label class="flex items-center space-x-2">
+                                <input type="checkbox" name="mapel_ids[]" value="{{ $item->id }}" class="text-green-500 focus:ring-green-500">
+                                <span>{{ $item->nama_mapel }}</span>
+                            </label>
+                        @endforeach
+                    </div>
+                    @error('mapel_ids')
+                        <p class="mt-2 text-sm text-red-600">{{ $message }}</p>
+                    @enderror
+                </div>                
+
+                <div>
                     <button type="submit" class="bg-green-500 text-white py-2 px-4 rounded hover:bg-green-600 transition duration-200">Simpan</button>
                 </div>
             </form>

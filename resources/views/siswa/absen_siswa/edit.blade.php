@@ -1,6 +1,7 @@
 <x-layout>
     <x-slot:title>{{$title}}</x-slot:title>
 
+    @if (Auth::user()->role == 'Admin')
         <form action="{{ route('absen_siswa.update', $absen_siswa->id) }}" method="post" enctype="multipart/form-data">
             @csrf
             @method('PUT')
@@ -30,6 +31,10 @@
                             <td class="px-4 py-2">
                                 <div class="flex justify-center space-x-4">
                                     <label class="inline-flex items-center">
+                                        <input type="radio" class="form-radio text-green-500" name="keterangan" value="Hadir" {{ $absen_siswa->keterangan == 'Hadir' ? 'checked' : '' }}>
+                                        <span class="ml-2">Hadir</span>
+                                    </label>
+                                    <label class="inline-flex items-center">
                                         <input type="radio" class="form-radio text-green-500" name="keterangan" value="Sakit" {{ $absen_siswa->keterangan == 'Sakit' ? 'checked' : '' }}>
                                         <span class="ml-2">Sakit</span>
                                     </label>
@@ -52,4 +57,7 @@
                 <button type="submit" class="bg-green-500 text-white py-2 px-4 rounded hover:bg-green-600 transition duration-200">Update</button>
             </div>
         </form>
+    @elseif (Auth::user()->role == 'Sekretaris')
+    <p class="text-center mt-4">Anda tidak memiliki hak untuk mengakses halaman ini.</p>
+    @endif
 </x-layout>

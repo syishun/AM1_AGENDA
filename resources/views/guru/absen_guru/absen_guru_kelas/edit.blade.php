@@ -12,13 +12,13 @@
 
                 <!-- Mapel -->
                 <div class="form-group">
-                    <label for="mapel_id" class="block text-sm font-medium text-gray-700">Mapel</label>
-                    <select class="mt-1 block w-full h-10 bg-gray-200 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-green-500 sm:text-sm @error('mapel_id') border-red-500 @enderror" name="mapel_id" id="mapel_id" style="padding-left: 10px">
+                    <label for="nama_mapel" class="block text-sm font-medium text-gray-700">Mapel</label>
+                    <select class="mt-1 block w-full h-10 bg-gray-200 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-green-500 sm:text-sm @error('nama_mapel') border-red-500 @enderror" name="nama_mapel" id="nama_mapel" style="padding-left: 10px">
                         @foreach ($mapel as $item)
-                            <option value="{{ $item->id }}" {{ $absen_guru->mapel_id == $item->id ? 'selected' : '' }}>{{ $item->mapel_id }}</option>
+                            <option value="{{ $item->id }}" {{ $absen_guru->nama_mapel == $item->id ? 'selected' : '' }}>{{ $item->nama_mapel }}</option>
                         @endforeach
                     </select>
-                    @error('mapel_id')
+                    @error('nama_mapel')
                         <p class="mt-2 text-sm text-red-600">{{ $message }}</p>
                     @enderror
                 </div>     

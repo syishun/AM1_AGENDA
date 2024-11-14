@@ -97,7 +97,7 @@ HTML;
         );
     }
 
-    public function testDoesNotMatchWhenExpressionIsNotEqual()
+    public function testDoesNotMatchWhenExpressioNISotEqual()
     {
         assertThat(
             'no match',

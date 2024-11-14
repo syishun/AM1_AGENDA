@@ -12,7 +12,7 @@
             </div>
         </form>
 
-        @if (Auth::user()->role == 'Perwakilan Kelas')
+        @if (Auth::user()->role == 'Sekretaris')
         <a href="{{ route('absen_siswa.create') }}" class="bg-green-500 text-white py-2 px-4 rounded hover:bg-green-600 transition duration-200 w-full md:w-auto text-center">Tambah Absensi</a>
         @endif
     </div>
@@ -23,7 +23,7 @@
     @if (Auth::user()->role == 'Admin')
         <p class="text-center mt-4">Tidak ada data absensi yang ditemukan</p>
         @endif
-        @if (Auth::user()->role == 'Perwakilan Kelas')
+        @if (Auth::user()->role == 'Sekretaris')
         <p class="text-center mt-4">Tidak ada absensi untuk kelas ini.</p>
         @endif
     @else
@@ -44,8 +44,8 @@
                                 <th class="px-4 py-2">Keterangan</th>
                                 @if(Auth::user()->role == 'Admin')
                                     <th class="py-3 px-6">Waktu Ditambahkan</th>
+                                    <th class="px-4 py-2">Aksi</th>
                                 @endif
-                                <th class="px-4 py-2">Aksi</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -54,24 +54,17 @@
                                     <td class="px-4 py-2">{{ $loop->iteration }}</td>
                                     <td class="px-4 py-2 text-left">{{ $item->data_siswa->nama_siswa }}</td>
                                     @if (Auth::user()->role == 'Admin')
-                                    <td class="px-4 py-2 text-left">{{ $item->kelas->kelas_id }}</td>
+                                    <td class="px-4 py-2 text-left">{{ $item->kelas->kelas }} {{ $item->kelas->jurusan->jurusan_id }} {{ $item->kelas->kelas_id }} ({{ $item->kelas->thn_ajaran }})</td>
                                     @endif
                                     <td class="px-4 py-2">{{ $item->keterangan }}</td>
                                     @if(Auth::user()->role == 'Admin')
                                     <td class="px-4 py-2">{{ \Carbon\Carbon::parse($item->created_at)->timezone('Asia/Jakarta')->format('d M Y H:i:s') }}</td>
-                                    @endif
                                     <td class="px-4 py-2">
                                         <div class="flex justify-center space-x-2">
                                             <a href="{{ route('absen_siswa.edit', $item->id) }}" class="bg-yellow-500 text-white px-3 py-1 rounded-md hover:bg-yellow-600 transition duration-200">Edit</a>
-                                            @if (Auth::user()->role == 'Admin')
-                                            <form action="{{ route('absen_siswa.destroy', $item->id) }}" method="POST" class="inline" onsubmit="return confirm('Apakah Anda yakin ingin menghapus data ini?');">
-                                                @csrf
-                                                @method('DELETE')
-                                                <button type="submit" class="bg-red-500 text-white px-3 py-1 rounded-md hover:bg-red-600 transition duration-200">Delete</button>
-                                            </form>
-                                            @endif
                                         </div>
                                     </td>
+                                    @endif
                                 </tr>
                             @endforeach
                         </tbody>

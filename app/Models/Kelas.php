@@ -10,4 +10,9 @@ class Kelas extends Model
     use HasFactory;
 
     protected $table = 'kelas';
+
+    public function jurusan()
+    {
+        return $this->belongsTo(Jurusan::class, 'jurusan_id');
+    }
 }

@@ -11,7 +11,7 @@
         <a href="{{ url('mapel/create') }}" class="bg-green-500 text-white py-2 px-4 rounded hover:bg-green-600 transition duration-200">Tambah Data</a>
     </div>
 
-    @if($mapelSorted->isEmpty())
+    @if($mapel->isEmpty())
         <p class="text-center mt-4">Mata pelajaran belum ditambahkan.</p>
     @else
         <!-- Tabel data mapel dengan desain konsisten -->
@@ -19,23 +19,29 @@
             <table class="min-w-full bg-white border border-gray-300 rounded-lg shadow-md">
                 <thead class="sticky top-0 bg-green-500 text-white">
                     <tr class="text-center">
+                        <th class="py-3 px-6">Nama Mapel</th>
                         <th class="py-3 px-6">Nama Guru</th>
                         <th class="py-3 px-6">Kode Guru</th>
-                        <th class="py-3 px-6">Nama Mapel</th>
-                        <th class="py-3 px-6">ID Mapel</th>
                         <th class="py-3 px-6">Aksi</th>
                     </tr>
                 </thead>
                 <tbody>
-                    @foreach ($mapelSorted as $item)
+                    @foreach ($mapel as $item)
                     <tr class="border-t border-gray-200 hover:bg-gray-100 text-center transition duration-200">
-                        <td class="py-3 px-6 text-left">{{ $item['data_guru']['nama_guru'] }}</td>
-                        <td class="py-3 px-6">{{ $item['data_guru']['kode_guru'] }}</td>
-                        <td class="py-3 px-6">{{ $item['nama_mapel'] }}</td>
-                        <td class="py-3 px-6">{{ $item['mapel_id'] }}</td>
+                        <td class="py-3 px-6">{{ $item->nama_mapel }}</td>
+                        <td class="py-3 px-6 text-left">
+                            @foreach ($item->dataGurus as $guru)
+                                {{ $guru->nama_guru }}{{ !$loop->last ? ',' : '' }}<br>
+                            @endforeach
+                        </td>
+                        <td class="py-3 px-6">
+                            @foreach ($item->dataGurus as $guru)
+                                {{ $guru->kode_guru }}{{ !$loop->last ? ',' : '' }}<br>
+                            @endforeach
+                        </td>
                         <td class="py-3 px-6 flex justify-center space-x-2">
-                            <a href="{{ url('mapel/' . $item['id'] . '/edit') }}" class="bg-yellow-500 text-white py-1 px-3 rounded hover:bg-yellow-600 transition duration-200">Edit</a>
-                            <form action="{{ url('mapel/' . $item['id']) }}" method="POST" onsubmit="return confirm('Apakah Anda yakin ingin menghapus data ini?');">
+                            <a href="{{ url('mapel/' . $item->id . '/edit') }}" class="bg-yellow-500 text-white py-1 px-3 rounded hover:bg-yellow-600 transition duration-200">Edit</a>
+                            <form action="{{ url('mapel/' . $item->id) }}" method="POST" onsubmit="return confirm('Apakah Anda yakin ingin menghapus data ini?');">
                                 @csrf
                                 @method('DELETE')
                                 <button type="submit" class="bg-red-500 text-white py-1 px-3 rounded hover:bg-red-600 transition duration-200">Delete</button>
@@ -43,7 +49,7 @@
                         </td>
                     </tr>
                     @endforeach
-                </tbody>
+                </tbody>                
             </table>
         </div>
     @endif

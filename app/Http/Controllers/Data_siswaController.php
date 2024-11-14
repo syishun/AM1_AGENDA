@@ -13,31 +13,29 @@ class Data_siswaController extends Controller
      */
     public function index(Request $request)
     {
-        // Mendapatkan data filter kelas_id dan search dari request
-        $filterKelas = $request->get('filterKelas');
         $search = $request->get('search');
 
-        // Query untuk mendapatkan data siswa
-        $data_siswaQuery = Data_siswa::query();
+        // Base query
+        $data_siswaQuery = Data_siswa::with(['kelas.jurusan']);
 
-        // Jika filter kelas_id tidak kosong, tambahkan kondisi where
-        if (!empty($filterKelas)) {
-            $data_siswaQuery->where('kelas_id', $filterKelas);
-        }
-
-        // Jika ada pencarian, tambahkan kondisi where untuk nama siswa
+        // Add search conditions
         if (!empty($search)) {
-            $data_siswaQuery->where('nama_siswa', 'like', '%' . $search . '%');
+            $data_siswaQuery->where(function ($query) use ($search) {
+                $query->where('nama_siswa', 'like', '%' . $search . '%')
+                    ->orWhereHas('kelas', function ($query) use ($search) {
+                        $query->where('kelas', 'like', '%' . $search . '%')
+                            ->orWhere('kelas_id', 'like', '%' . $search . '%')
+                            ->orWhere('thn_ajaran', 'like', '%' . $search . '%')
+                            ->orWhereHas('jurusan', function ($query) use ($search) {
+                                $query->where('jurusan_id', 'like', '%' . $search . '%');
+                            });
+                    });
+            });
         }
 
-        // Eksekusi query dan dapatkan hasil
         $data_siswa = $data_siswaQuery->get();
 
-        // Mendapatkan daftar kelas untuk dropdown
-        $kelas = Kelas::all();
-
-        // Menampilkan data ke view
-        return view('admin.data_siswa.index', compact('data_siswa', 'kelas'), ['title' => 'Data Siswa']);
+        return view('admin.data_siswa.index', compact('data_siswa'), ['title' => 'Data Siswa']);
     }
 
     /**
@@ -46,7 +44,10 @@ class Data_siswaController extends Controller
     public function create()
     {
         $data_siswa = Data_siswa::all();
-        $kelas = Kelas::all();
+        $kelas = Kelas::orderByRaw("FIELD(kelas, 'X', 'XI', 'XII')")
+            ->orderBy('kelas_id', 'asc')
+            ->get();
+
         return view('admin.data_siswa.create', compact('data_siswa', 'kelas'), ['title' => 'Tambah Data Siswa']);
     }
 
@@ -58,22 +59,23 @@ class Data_siswaController extends Controller
         $request->validate(
             [
                 'nama_siswa' => 'required',
-                'nisn_id' => 'required',
+                'nis_id' => 'required|max:10',
                 'gender' => 'required',
                 'kelas_id' => 'required',
             ],
             [
-                'nama_siswa' => 'Nama siswa tidak boleh kosong',
-                'nisn_id' => 'NISN tidak boleh kosong',
-                'gender' => 'Gender tidak boleh kosong',
-                'kelas_id' => 'Kelas tidak boleh kosong',
+                'nama_siswa.required' => 'Nama siswa tidak boleh kosong',
+                'nis_id.required' => 'NIS tidak boleh kosong',
+                'nis_id.max' => 'NIS tidak boleh lebih dari 10 karakter',
+                'gender.required' => 'Gender tidak boleh kosong',
+                'kelas_id.required' => 'Kelas tidak boleh kosong',
             ]
         );
 
         $add = new Data_siswa;
 
         $add->nama_siswa = $request->nama_siswa;
-        $add->nisn_id = $request->nisn_id;
+        $add->nis_id = $request->nis_id;
         $add->gender = $request->gender;
         $add->kelas_id = $request->kelas_id;
 
@@ -95,7 +97,10 @@ class Data_siswaController extends Controller
     public function edit(string $id)
     {
         $data_siswa = Data_siswa::findOrFail($id);
-        $kelas = Kelas::all();
+        $kelas = Kelas::orderByRaw("FIELD(kelas, 'X', 'XI', 'XII')")
+            ->orderBy('kelas_id', 'asc')
+            ->get();
+
         return view('admin.data_siswa.edit', compact('data_siswa', 'kelas'),  ['title' => 'Edit Data Siswa']);
     }
 
@@ -104,17 +109,25 @@ class Data_siswaController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        $request->validate([
-            'nama_siswa' => 'required',
-            'nisn_id' => 'required',
-            'gender' => 'required',
-            'kelas_id' => 'required',
-        ]);
+        $request->validate(
+            [
+                'nama_siswa' => 'required',
+                'nis_id' => 'required|max:10',
+                'gender' => 'required',
+                'kelas_id' => 'required',
+            ],
+            [
+                'nama_siswa.required' => 'Nama siswa tidak boleh kosong',
+                'nis_id.max' => 'NIS tidak boleh lebih dari 10 karakter',
+                'gender.required' => 'Gender tidak boleh kosong',
+                'kelas_id.required' => 'Kelas tidak boleh kosong',
+            ]
+        );
 
         $data_siswa = Data_siswa::findOrFail($id);
 
         $data_siswa->nama_siswa = $request->nama_siswa;
-        $data_siswa->nisn_id = $request->nisn_id;
+        $data_siswa->nis_id = $request->nis_id;
         $data_siswa->gender = $request->gender;
         $data_siswa->kelas_id = $request->kelas_id;
         $data_siswa->save();

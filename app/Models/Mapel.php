@@ -11,8 +11,8 @@ class Mapel extends Model
 
     protected $table = 'mapels';
 
-    public function data_guru()
+    public function dataGurus()
     {
-        return $this->belongsTo('App\Models\Data_guru', 'kode_guru', 'id');
+        return $this->belongsToMany(Data_guru::class, 'guru_mapel');
     }
 }

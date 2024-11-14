@@ -19,32 +19,45 @@ class UserController extends Controller
         // Query pengguna dengan filter dan pencarian
         $userQuery = User::query();
 
-        // Jika filter role diisi, tambahkan kondisi where
         if (!empty($role)) {
             $userQuery->where('role', $role);
         }
 
-        // Jika ada pencarian username, tambahkan kondisi where untuk name
         if (!empty($search)) {
             $userQuery->where('name', 'like', '%' . $search . '%');
         }
 
-        // Eksekusi query dan ambil hasil
         $user = $userQuery->get();
 
-        // Mendapatkan data kelas untuk dropdown (jika diperlukan)
+        // Mendapatkan data kelas dan data guru dengan pengurutan kode_guru
         $kelas = Kelas::all();
-        $data_guru = Data_guru::all();
+        $data_guru = Data_guru::all()->sort(function ($a, $b) {
+            preg_match('/(\d+)([a-z]*)/', $a->kode_guru, $matchesA);
+            preg_match('/(\d+)([a-z]*)/', $b->kode_guru, $matchesB);
 
-        // Menampilkan data ke view
+            return $matchesA[1] === $matchesB[1]
+                ? strcmp($matchesA[2], $matchesB[2])
+                : $matchesA[1] - $matchesB[1];
+        });
+
         return view('admin.user.index', compact('user', 'kelas', 'data_guru'), ['title' => 'Data Pengguna']);
     }
 
     public function create()
     {
         $user = User::all();
-        $kelas = Kelas::all();
-        $data_guru = Data_guru::all();
+        $kelas = Kelas::orderByRaw("FIELD(kelas, 'X', 'XI', 'XII')")
+            ->orderBy('kelas_id', 'asc')
+            ->get();
+        $data_guru = Data_guru::all()->sort(function ($a, $b) {
+            preg_match('/(\d+)([a-z]*)/', $a->kode_guru, $matchesA);
+            preg_match('/(\d+)([a-z]*)/', $b->kode_guru, $matchesB);
+
+            return $matchesA[1] === $matchesB[1]
+                ? strcmp($matchesA[2], $matchesB[2])
+                : $matchesA[1] - $matchesB[1];
+        });
+
         return view('admin.user.create', compact('user', 'kelas', 'data_guru'), ['title' => 'Tambah Pengguna']);
     }
 
@@ -54,13 +67,13 @@ class UserController extends Controller
             'name' => 'required|unique:users,name',
             'password' => 'required|min:6',
             'role' => 'required',
-            'kelas_id' => 'nullable|exists:kelas,id|required_if:role,Perwakilan Kelas',
+            'kelas_id' => 'nullable|exists:kelas,id|required_if:role,Sekretaris',
             'kode_guru' => 'nullable|exists:data_gurus,id|required_if:role,Guru',
         ]);
 
-        // Pastikan kelas_id hanya bisa diisi oleh Perwakilan Kelas
-        if ($request->role !== 'Perwakilan Kelas' && $request->filled('kelas_id')) {
-            return redirect()->back()->withErrors(['kelas_id' => 'Kelas hanya dapat dipilih oleh pengguna dengan peran Perwakilan Kelas.']);
+        // Pastikan kelas_id hanya bisa diisi oleh Sekretaris
+        if ($request->role !== 'Sekretaris' && $request->filled('kelas_id')) {
+            return redirect()->back()->withErrors(['kelas_id' => 'Kelas hanya dapat dipilih oleh pengguna dengan peran Sekretaris.']);
         }
 
         if ($request->role !== 'Guru' && $request->filled('kode_guru')) {
@@ -82,8 +95,18 @@ class UserController extends Controller
     public function edit(string $id)
     {
         $user = User::findOrFail($id);
-        $kelas = Kelas::all();
-        $data_guru = Data_guru::all();
+        $kelas = Kelas::orderByRaw("FIELD(kelas, 'X', 'XI', 'XII')")
+            ->orderBy('kelas_id', 'asc')
+            ->get();
+        $data_guru = Data_guru::all()->sort(function ($a, $b) {
+            preg_match('/(\d+)([a-z]*)/', $a->kode_guru, $matchesA);
+            preg_match('/(\d+)([a-z]*)/', $b->kode_guru, $matchesB);
+
+            return $matchesA[1] === $matchesB[1]
+                ? strcmp($matchesA[2], $matchesB[2])
+                : $matchesA[1] - $matchesB[1];
+        });
+
         return view('admin.user.edit', compact('user', 'kelas', 'data_guru'), ['title' => 'Edit Pengguna']);
     }
 
@@ -93,13 +116,13 @@ class UserController extends Controller
             'name' => 'required|unique:users,name,' . $id,
             'password' => 'nullable|min:6',
             'role' => 'required',
-            'kelas_id' => 'nullable|exists:kelas,id|required_if:role,Perwakilan Kelas',
+            'kelas_id' => 'nullable|exists:kelas,id|required_if:role,Sekretaris',
             'kode_guru' => 'nullable|exists:data_gurus,id|required_if:role,Guru',
         ]);
 
-        // Pastikan kelas_id hanya bisa diisi oleh Perwakilan Kelas
-        if ($request->role !== 'Perwakilan Kelas' && $request->filled('kelas_id')) {
-            return redirect()->back()->withErrors(['kelas_id' => 'Kelas hanya dapat dipilih oleh pengguna dengan peran Perwakilan Kelas.']);
+        // Pastikan kelas_id hanya bisa diisi oleh Sekretaris
+        if ($request->role !== 'Sekretaris' && $request->filled('kelas_id')) {
+            return redirect()->back()->withErrors(['kelas_id' => 'Kelas hanya dapat dipilih oleh pengguna dengan peran Sekretaris.']);
         }
 
         if ($request->role !== 'Guru' && $request->filled('kode_guru')) {

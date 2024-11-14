@@ -9,7 +9,7 @@
                 <option value="">Role</option>
                 <option value="Admin" {{ request('filterRole') == 'Admin' ? 'selected' : '' }}>Admin</option>
                 <option value="Guru" {{ request('filterRole') == 'Guru' ? 'selected' : '' }}>Guru</option>
-                <option value="Perwakilan Kelas" {{ request('filterRole') == 'Perwakilan Kelas' ? 'selected' : '' }}>Perwakilan Kelas</option>
+                <option value="Sekretaris" {{ request('filterRole') == 'Sekretaris' ? 'selected' : '' }}>Sekretaris</option>
             </select>
             <button type="submit" class="bg-green-500 hover:bg-green-600 text-white py-2 px-4 rounded mt-2 md:mt-0 transition duration-200">Cari</button>
         </form>
@@ -49,7 +49,7 @@
                         </td>
                         <td class="py-3 px-6">
                             @if($item->kelas)
-                                {{ $item->kelas->kelas_id }}
+                                {{ $item->kelas->kelas }} {{ $item->kelas->jurusan->jurusan_id }} {{ $item->kelas->kelas_id }} ({{ $item->kelas->thn_ajaran }})
                             @else
                                 -
                             @endif

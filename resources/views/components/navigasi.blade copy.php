@@ -37,7 +37,7 @@
                             <a href="{{ url('absen_guru') }}" class="rounded-md px-3 py-2 text-sm font-medium {{ Request::is('absen_guru') || Request::is('absen_guru/kelas/*') || Request::is('absen_guru/create/*') || Request::is('absen_guru/*/edit') ? 'bg-green-500 text-white' : 'text-gray-300 hover:bg-green-500 hover:text-white' }}">Absensi</a>
 
                             <!-- Siswa Navigation -->
-                            @elseif (Auth::user()->role == 'Perwakilan Kelas')
+                            @elseif (Auth::user()->role == 'Sekretaris')
                             <a href="{{ url('siswa') }}" class="rounded-md px-3 py-2 text-sm font-medium {{ Request::is('siswa') ? 'bg-green-500 text-white' : 'text-gray-300 hover:bg-green-500 hover:text-white' }}">Beranda</a>
                             <a href="{{ url('absen_siswa') }}" class="rounded-md px-3 py-2 text-sm font-medium {{ Request::is('absen_siswa') || Request::is('absen_siswa/create') || Request::is('absen_siswa/*/edit') ? 'bg-green-500 text-white' : 'text-gray-300 hover:bg-green-500 hover:text-white' }}">Absensi</a>
                             <a href="{{ $kelasId ? url('absen_guru/kelas/' . $kelasId) : '#' }}" class="rounded-md px-3 py-2 text-sm font-medium {{ Request::is('absen_guru/kelas/' . $kelasId) ? 'bg-green-500 text-white' : 'text-gray-300 hover:bg-green-500 hover:text-white' }}">Tugas</a>
@@ -47,7 +47,7 @@
                 </div>
                 <div class="hidden md:block">
                     <div class="ml-4 flex items-center md:ml-6">
-                        @if (Auth::user()->role == 'Perwakilan Kelas')
+                        @if (Auth::user()->role == 'Sekretaris')
                         <!-- Notification Button -->
                         <button @click="isNotificationOpen = !isNotificationOpen" class="relative rounded-full p-1 text-gray-300 hover:text-white focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800">
                             <span class="sr-only">View notifications</span>
@@ -146,7 +146,7 @@
                 <a href="{{ url('agenda') }}" class="block rounded-md px-3 py-2 text-base font-medium {{ Request::is('agenda') || Request::is('agenda/kelas/*') || Request::is('agenda/create/*') || Request::is('agenda/*/edit') ? 'bg-green-500 text-white' : 'text-gray-300 hover:bg-green-500 hover:text-white' }}">Agenda</a>
                 <a href="{{ url('absen_guru') }}" class="block rounded-md px-3 py-2 text-base font-medium {{ Request::is('absen_guru') || Request::is('absen_guru/kelas/*') || Request::is('absen_guru/create/*') || Request::is('absen_guru/*/edit') ? 'text-white bg-green-500' : 'text-gray-300 hover:bg-green-500 hover:text-white' }}">Absensi</a>
                 <!-- Siswa -->
-                @elseif (Auth::user()->role == 'Perwakilan Kelas')
+                @elseif (Auth::user()->role == 'Sekretaris')
                 <a href="{{ url('siswa') }}" class="block rounded-md px-3 py-2 text-base font-medium {{ Request::is('siswa') ? 'text-white bg-green-500' : 'text-gray-300 hover:bg-green-500 hover:text-white' }}" aria-current="page">Beranda</a>
                 <a href="{{ url('absen_siswa') }}" class="block rounded-md px-3 py-2 text-base font-medium {{ Request::is('absen_siswa') || Request::is('absen_siswa/create') || Request::is('absen_siswa/*/edit') ? 'text-white bg-green-500' : 'text-gray-300 hover:bg-green-500 hover:text-white' }}">Absensi</a>
                 <!-- Use the dynamic kelas ID to redirect directly to the class page -->
@@ -158,7 +158,7 @@
                     <div class="flex-shrink-0">
                         <img class="h-10 w-10 rounded-full" src="{{ asset('assets/images/icon.png') }}" alt="">
                     </div>
-                    @if (Auth::user()->role == 'Perwakilan Kelas')
+                    @if (Auth::user()->role == 'Sekretaris')
                     <!-- Notification Button -->
                     <button
                         type="button"

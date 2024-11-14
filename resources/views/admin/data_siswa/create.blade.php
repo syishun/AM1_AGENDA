@@ -9,6 +9,19 @@
                 @csrf
 
                 <div>
+                    <label for="kelas_id" class="block text-sm font-medium text-gray-700">Kelas</label>
+                    <select class="mt-1 block w-full h-10 bg-gray-200 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-green-500 sm:text-sm @error('kelas_id') border-red-500 @enderror" name="kelas_id" id="kelas_id" style="padding-left: 10px;">
+                        <option value="">--Pilih--</option>
+                        @foreach ($kelas as $item)
+                            <option value="{{ $item->id }}">{{ $item->kelas }} {{ $item->jurusan->jurusan_id }} {{ $item->kelas_id }} ({{ $item->thn_ajaran }})</option>
+                        @endforeach
+                    </select>
+                    @error('kelas_id')
+                        <p class="mt-2 text-sm text-red-600">{{ $message }}</p>
+                    @enderror
+                </div>
+
+                <div>
                     <label for="nama_siswa" class="block text-sm font-medium text-gray-700">Nama Siswa</label>
                     <input type="text" class="mt-1 block w-full h-10 bg-gray-200 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-green-500 sm:text-sm @error('nama_siswa') border-red-500 @enderror" id="nama_siswa" name="nama_siswa" value="{{ old('nama_siswa') }}" style="padding-left: 10px;">
                     @error('nama_siswa')
@@ -17,9 +30,9 @@
                 </div>
 
                 <div>
-                    <label for="nisn_id" class="block text-sm font-medium text-gray-700">NISN</label>
-                    <input type="text" class="mt-1 block w-full h-10 bg-gray-200 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-green-500 sm:text-sm @error('nisn_id') border-red-500 @enderror" id="nisn_id" name="nisn_id" value="{{ old('nisn_id') }}" style="padding-left: 10px;">
-                    @error('nisn_id')
+                    <label for="nis_id" class="block text-sm font-medium text-gray-700">NIS</label>
+                    <input type="number" class="mt-1 block w-full h-10 bg-gray-200 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-green-500 sm:text-sm @error('nis_id') border-red-500 @enderror" id="nis_id" name="nis_id" value="{{ old('nis_id') }}" style="padding-left: 10px;">
+                    @error('nis_id')
                         <p class="mt-2 text-sm text-red-600">{{ $message }}</p>
                     @enderror
                 </div>
@@ -41,19 +54,6 @@
                         </div>
                     </div>
                     @error('gender')
-                        <p class="mt-2 text-sm text-red-600">{{ $message }}</p>
-                    @enderror
-                </div>
-
-                <div>
-                    <label for="kelas_id" class="block text-sm font-medium text-gray-700">Kelas</label>
-                    <select class="mt-1 block w-full h-10 bg-gray-200 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-green-500 sm:text-sm @error('kelas_id') border-red-500 @enderror" name="kelas_id" id="kelas_id" style="padding-left: 10px;">
-                        <option value="">--Pilih--</option>
-                        @foreach ($kelas as $item)
-                            <option value="{{ $item->id }}">{{ $item->kelas_id }}</option>
-                        @endforeach
-                    </select>
-                    @error('kelas_id')
                         <p class="mt-2 text-sm text-red-600">{{ $message }}</p>
                     @enderror
                 </div>
