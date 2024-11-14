@@ -13,6 +13,6 @@ class Mapel extends Model
 
     public function dataGurus()
     {
-        return $this->belongsToMany(Data_guru::class, 'guru_mapel');
+        return $this->belongsToMany(Data_guru::class, 'guru_mapel', 'mapel_id', 'data_guru_id');
     }
 }

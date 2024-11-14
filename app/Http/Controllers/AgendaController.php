@@ -24,12 +24,10 @@ class AgendaController extends Controller
     {
         // Fetch class details
         $kelas = Kelas::find($id);
-
         $filterDate = $request->query('date') ?? Carbon::today()->toDateString();
 
-        // Query agenda for the class, optionally filtering by date and kode_guru for teachers
+        // Query agenda for the class, optionally filtering by date
         $agendaQuery = Agenda::where('kelas_id', $id)->orderBy('tgl', 'desc');
-
         if ($filterDate) {
             $agendaQuery->whereDate('tgl', $filterDate);
         }
@@ -37,14 +35,15 @@ class AgendaController extends Controller
         // Filter agenda by kode_guru if the user is a teacher
         if (auth()->user()->role == 'Guru') {
             $kodeGuru = auth()->user()->kode_guru;
-            $agendaQuery->whereHas('mapel', function ($query) use ($kodeGuru) {
-                $query->where('kode_guru', $kodeGuru);
+            $agendaQuery->whereHas('mapel.dataGurus', function ($query) use ($kodeGuru) {
+                $query->where('data_gurus.kode_guru', $kodeGuru);
             });
         }
 
         $agenda = $agendaQuery->get();
-
-        return view('guru.agenda.agenda_kelas.index', compact('agenda', 'kelas', 'filterDate'), ['title' => 'Agenda Harian Kelas ' . $kelas->kelas . ' ' . $kelas->jurusan->jurusan_id . ' ' . $kelas->kelas_id]);
+        return view('guru.agenda.agenda_kelas.index', compact('agenda', 'kelas', 'filterDate'), [
+            'title' => 'Agenda Harian Kelas ' . $kelas->kelas . ' ' . $kelas->jurusan->jurusan_id . ' ' . $kelas->kelas_id
+        ]);
     }
 
     /**
@@ -53,11 +52,16 @@ class AgendaController extends Controller
     // Ubah fungsi create agar menerima $kelas_id dari route.
     public function create($kelas_id)
     {
-        $userKodeGuru = auth()->user()->kode_guru; // Ambil kode_guru dari user yang sedang login
-        $mapel = Mapel::where('kode_guru', $userKodeGuru)->get(); // Ambil mapel yang diajarkan oleh guru ini
+        $userKodeGuru = auth()->user()->kode_guru; // Retrieve kode_guru of logged-in teacher
+        $mapel = Mapel::whereHas('dataGurus', function ($query) use ($userKodeGuru) {
+            $query->where('kode_guru', $userKodeGuru);
+        })->get();
+
         $kelas = Kelas::findOrFail($kelas_id);
 
-        return view('guru.agenda.agenda_kelas.create', compact('mapel', 'kelas_id'), ['title' => 'Tambah Agenda Harian Kelas ' . $kelas->kelas . ' ' . $kelas->jurusan->jurusan_id . ' ' . $kelas->kelas_id]);
+        return view('guru.agenda.agenda_kelas.create', compact('mapel', 'kelas_id'), [
+            'title' => 'Tambah Agenda Harian Kelas ' . $kelas->kelas . ' ' . $kelas->jurusan->jurusan_id . ' ' . $kelas->kelas_id
+        ]);
     }
 
     public function store(Request $request)

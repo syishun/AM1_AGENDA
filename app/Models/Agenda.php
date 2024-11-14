@@ -18,7 +18,7 @@ class Agenda extends Model
 
     public function mapel()
     {
-        return $this->belongsTo('App\Models\Mapel', 'nama_mapel', 'id');
+        return $this->belongsTo(Mapel::class, 'mapel_id', 'id');
     }
 
     public function data_guru()

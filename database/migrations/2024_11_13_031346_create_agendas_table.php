@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->date('tgl');
             $table->foreignId('kelas_id')->constrained('kelas')->onDelete('cascade')->onUpdate('cascade');
-            $table->foreignId('nama_mapel')->constrained('mapels')->onDelete('cascade')->onUpdate('cascade');
+            $table->foreignId('mapel_id')->constrained('mapels')->onDelete('cascade')->onUpdate('cascade');
             $table->string('aktivitas');
             $table->time('jam_msk');
             $table->time('jam_keluar');
