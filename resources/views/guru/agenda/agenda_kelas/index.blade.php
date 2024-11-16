@@ -69,7 +69,7 @@
                                 @endif
                                 @if(Auth::user()->role == 'Guru')
                                 <td class="py-3 px-6 flex justify-center space-x-2">
-                                    @if($item->mapel->kode_guru == Auth::user()->kode_guru)
+                                    @if(Auth::user()->kode_guru)
                                         <a href="{{ url('agenda/' . $item->id . '/edit') }}" class="bg-yellow-500 text-white py-1 px-3 rounded hover:bg-yellow-600 transition duration-200">Edit</a>
                                         <form action="{{ url('agenda/' . $item->id) }}" method="POST" onsubmit="return confirm('Apakah Anda yakin ingin menghapus data ini?');">
                                             @csrf

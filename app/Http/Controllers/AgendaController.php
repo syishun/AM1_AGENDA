@@ -7,6 +7,7 @@ use Illuminate\Support\Carbon;
 use App\Models\Agenda;
 use App\Models\Kelas;
 use App\Models\Mapel;
+use DB;
 
 class AgendaController extends Controller
 {
@@ -22,25 +23,18 @@ class AgendaController extends Controller
 
     public function agendaByClass(Request $request, $id)
     {
-        // Fetch class details
         $kelas = Kelas::find($id);
         $filterDate = $request->query('date') ?? Carbon::today()->toDateString();
 
-        // Query agenda for the class, optionally filtering by date
+        // Retrieve agenda items for the specified class and date without filtering by teacher
         $agendaQuery = Agenda::where('kelas_id', $id)->orderBy('tgl', 'desc');
         if ($filterDate) {
             $agendaQuery->whereDate('tgl', $filterDate);
         }
 
-        // Filter agenda by kode_guru if the user is a teacher
-        if (auth()->user()->role == 'Guru') {
-            $kodeGuru = auth()->user()->kode_guru;
-            $agendaQuery->whereHas('mapel.dataGurus', function ($query) use ($kodeGuru) {
-                $query->where('data_gurus.kode_guru', $kodeGuru);
-            });
-        }
-
+        // Removed the condition that filters subjects based on the logged-in teacher
         $agenda = $agendaQuery->get();
+
         return view('guru.agenda.agenda_kelas.index', compact('agenda', 'kelas', 'filterDate'), [
             'title' => 'Agenda Harian Kelas ' . $kelas->kelas . ' ' . $kelas->jurusan->jurusan_id . ' ' . $kelas->kelas_id
         ]);
@@ -52,16 +46,20 @@ class AgendaController extends Controller
     // Ubah fungsi create agar menerima $kelas_id dari route.
     public function create($kelas_id)
     {
-        $userKodeGuru = auth()->user()->kode_guru; // Retrieve kode_guru of logged-in teacher
-        $mapel = Mapel::whereHas('dataGurus', function ($query) use ($userKodeGuru) {
-            $query->where('kode_guru', $userKodeGuru);
-        })->get();
+        $kode_guru = auth()->user()->kode_guru;
+        $assignedMapels = DB::table('guru_mapel')
+            ->where('data_guru_id', $kode_guru)
+            ->pluck('mapel_id');
+
+        // Retrieve subjects based on the IDs from `guru_mapel`
+        $mapel = Mapel::whereIn('id', $assignedMapels)->get();
 
         $kelas = Kelas::findOrFail($kelas_id);
 
-        return view('guru.agenda.agenda_kelas.create', compact('mapel', 'kelas_id'), [
-            'title' => 'Tambah Agenda Harian Kelas ' . $kelas->kelas . ' ' . $kelas->jurusan->jurusan_id . ' ' . $kelas->kelas_id
-        ]);
+        return view('guru.agenda.agenda_kelas.create', [
+            'kelas_id' => $kelas_id,
+            'mapel' => $mapel
+        ], ['title' => 'Tambah Agenda Harian Kelas ' . $kelas->kelas . ' ' . $kelas->jurusan->jurusan_id . ' ' . $kelas->kelas_id]);
     }
 
     public function store(Request $request)
@@ -72,7 +70,7 @@ class AgendaController extends Controller
                     $fail('Tanggal harus diisi dengan tanggal hari ini.');
                 }
             }],
-            'nama_mapel' => 'required',
+            'mapel_id' => 'required',
             'aktivitas' => 'required',
             'jam_msk' => 'required',
             'jam_keluar' => 'required',
@@ -81,7 +79,7 @@ class AgendaController extends Controller
         $add = new Agenda;
         $add->tgl = $request->tgl;
         $add->kelas_id = $request->kelas_id; // Kelas akan disimpan langsung dari parameter request
-        $add->nama_mapel = $request->nama_mapel;
+        $add->mapel_id = $request->mapel_id;
         $add->aktivitas = $request->aktivitas;
         $add->jam_msk = $request->jam_msk;
         $add->jam_keluar = $request->jam_keluar;
@@ -104,12 +102,19 @@ class AgendaController extends Controller
     public function edit(string $id)
     {
         $agenda = Agenda::findOrFail($id);
-        $userKodeGuru = auth()->user()->kode_guru; // Ambil kode_guru dari user yang sedang login
-        $mapel = Mapel::where('kode_guru', $userKodeGuru)->get(); // Ambil mapel yang diajarkan oleh guru ini
-        $kelas = Kelas::findOrFail($agenda->kelas_id);  // Ambil data kelas
+        $kode_guru = auth()->user()->kode_guru;
+        $assignedMapels = DB::table('guru_mapel')
+            ->where('data_guru_id', $kode_guru)
+            ->pluck('mapel_id');
+
+        // Retrieve subjects based on the IDs from `guru_mapel`
+        $mapel = Mapel::whereIn('id', $assignedMapels)->get();
+        $kelas = Kelas::findOrFail($agenda->kelas_id);
         $kelas_id = $kelas->id;
 
-        return view('guru.agenda.agenda_kelas.edit', compact('agenda', 'kelas_id', 'mapel'), ['title' => 'Edit Agenda Harian Kelas ' . $kelas->kelas . ' ' . $kelas->jurusan->jurusan_id . ' ' . $kelas->kelas_id]);
+        return view('guru.agenda.agenda_kelas.edit', compact('agenda', 'kelas_id', 'mapel'), [
+            'title' => 'Edit Agenda Harian Kelas ' . $kelas->kelas . ' ' . $kelas->jurusan->jurusan_id . ' ' . $kelas->kelas_id
+        ]);
     }
 
     /**
@@ -118,7 +123,7 @@ class AgendaController extends Controller
     public function update(Request $request, string $id)
     {
         $request->validate([
-            'nama_mapel' => 'required',
+            'mapel_id' => 'required',
             'aktivitas' => 'required',
             'jam_msk' => 'required',
             'jam_keluar' => 'required',
@@ -129,10 +134,11 @@ class AgendaController extends Controller
         // Ensure that 'kelas_id' is included in the request
         $agenda->kelas_id = $request->kelas_id;  // Check if 'kelas_id' is null here
         // $agenda->tgl = $request->tgl; // Komentar atau hapus baris ini untuk menjaga tanggal tetap
-        $agenda->nama_mapel = $request->nama_mapel;
+        $agenda->mapel_id = $request->mapel_id;
         $agenda->aktivitas = $request->aktivitas;
         $agenda->jam_msk = $request->jam_msk;
         $agenda->jam_keluar = $request->jam_keluar;
+
         $agenda->save();
 
         return redirect('agenda/kelas/' . $request->kelas_id)->with('status', 'Data berhasil diupdate');

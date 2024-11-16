@@ -21,7 +21,7 @@
                     <tr>
                         <th class="px-4 py-2">No</th>
                         <th class="px-4 py-2">Nama Siswa</th>
-                        <th class="px-4 py-2">Keterangan</th>
+                        <th class="px-4 py-2">Keterangan (Kosongkan Jika Hadir)</th>
                     </tr>
                 </thead>
                 <tbody>

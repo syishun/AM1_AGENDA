@@ -41,13 +41,7 @@ class Absen_guruController extends Controller
             ->whereDate('tgl', $filterDate)
             ->orderBy('tgl', 'desc');
 
-        if (auth()->user()->role == 'Guru') {
-            $kodeGuru = auth()->user()->kode_guru;
-            $absenGuruQuery->whereHas('mapel', function ($query) use ($kodeGuru) {
-                $query->where('kode_guru', $kodeGuru);
-            });
-        }
-
+        // Removed condition that filters mapel by kode_guru, so all subjects are shown
         $absen_guru = $absenGuruQuery->get();
 
         return view('guru.absen_guru.absen_guru_kelas.index', compact('absen_guru', 'kelas', 'filterDate'), ['title' => $title . ' di Kelas ' . $kelas->kelas . ' ' . $kelas->jurusan->jurusan_id . ' ' . $kelas->kelas_id]);
@@ -58,8 +52,8 @@ class Absen_guruController extends Controller
      */
     public function create($kelas_id)
     {
-        $userKodeGuru = auth()->user()->kode_guru;
-        $mapel = Mapel::where('kode_guru', $userKodeGuru)->get();
+        // Get all subjects without filtering by teacher's kode_guru
+        $mapel = Mapel::all();
         $kelas = Kelas::findOrFail($kelas_id);
         return view('guru.absen_guru.absen_guru_kelas.create', compact('mapel', 'kelas_id'), ['title' => 'Tambah Absensi di Kelas ' . $kelas->kelas . ' ' . $kelas->jurusan->jurusan_id . ' ' . $kelas->kelas_id]);
     }
@@ -135,8 +129,7 @@ class Absen_guruController extends Controller
     public function edit(string $id)
     {
         $absen_guru = Absen_guru::findOrFail($id);
-        $userKodeGuru = auth()->user()->kode_guru;
-        $mapel = Mapel::where('kode_guru', $userKodeGuru)->get();
+        $mapel = Mapel::all();
         $kelas = Kelas::findOrFail($absen_guru->kelas_id);
         $kelas_id =  $kelas->id;
         return view('guru.absen_guru.absen_guru_kelas.edit', compact('absen_guru', 'mapel', 'kelas_id'), ['title' => 'Edit Absensi di Kelas ' . $kelas->kelas . ' ' . $kelas->jurusan->jurusan_id . ' ' . $kelas->kelas_id]);

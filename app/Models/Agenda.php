@@ -13,7 +13,7 @@ class Agenda extends Model
 
     public function kelas()
     {
-        return $this->belongsTo('App\Models\Kelas', 'kelas_id', 'id');
+        return $this->belongsTo(Kelas::class, 'kelas_id', 'id');
     }
 
     public function mapel()
@@ -21,8 +21,13 @@ class Agenda extends Model
         return $this->belongsTo(Mapel::class, 'mapel_id', 'id');
     }
 
-    public function data_guru()
+    public function dataGurus()
     {
-        return $this->belongsTo(Data_guru::class, 'kode_guru', 'kode_guru');
+        return $this->belongsToMany(Data_guru::class, 'guru_mapel', 'mapel_id', 'data_guru_id');
+    }
+
+    public function mapels()
+    {
+        return $this->belongsToMany(Mapel::class, 'guru_mapel', 'data_guru_id', 'mapel_id');
     }
 }
