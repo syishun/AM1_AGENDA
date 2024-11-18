@@ -37,9 +37,6 @@
                     <thead class="sticky top-0 bg-green-500 text-white">
                         <tr class="text-center">
                             <th class="py-3 px-6">No</th>
-                            @if(Auth::user()->role == 'Admin')
-                            <th class="px-4 py-2">Nama Guru</th>
-                            @endif
                             <th class="py-3 px-6">Mapel</th>
                             <th class="py-3 px-6">Aktivitas</th>
                             <th class="py-3 px-6">Jam Masuk</th>
@@ -57,9 +54,6 @@
                         @foreach ($agendas as $item)
                             <tr class="border-t border-gray-200 hover:bg-gray-100 text-center">
                                 <td class="py-3 px-6">{{ $loop->iteration }}</td>
-                                @if(Auth::user()->role == 'Admin')
-                                <td class="px-4 py-2">{{ $item->mapel->data_guru->nama_guru }}</td>
-                                @endif
                                 <td class="py-3 px-6">{{ $item->mapel->nama_mapel }}</td>
                                 <td class="py-3 px-6">{{ $item->aktivitas }}</td>
                                 <td class="py-3 px-6">{{ $item->jam_msk }}</td>
@@ -68,15 +62,17 @@
                                 <td class="px-4 py-2">{{ \Carbon\Carbon::parse($item->created_at)->timezone('Asia/Jakarta')->format('d M Y H:i:s') }}</td>
                                 @endif
                                 @if(Auth::user()->role == 'Guru')
-                                <td class="py-3 px-6 flex justify-center space-x-2">
-                                    @if(Auth::user()->kode_guru)
-                                        <a href="{{ url('agenda/' . $item->id . '/edit') }}" class="bg-yellow-500 text-white py-1 px-3 rounded hover:bg-yellow-600 transition duration-200">Edit</a>
-                                        <form action="{{ url('agenda/' . $item->id) }}" method="POST" onsubmit="return confirm('Apakah Anda yakin ingin menghapus data ini?');">
-                                            @csrf
-                                            @method('DELETE')
-                                            <button type="submit" class="bg-red-500 text-white py-1 px-3 rounded hover:bg-red-600 transition duration-200">Delete</button>
-                                        </form>
-                                    @endif
+                                <td class="px-4 py-2 text-center">
+                                    <div class="flex justify-center items-center space-x-2">
+                                        @if(Auth::user()->kode_guru)
+                                            <a href="{{ url('agenda/' . $item->id . '/edit') }}" class="bg-yellow-500 text-white py-1 px-3 rounded hover:bg-yellow-600 transition duration-200">Edit</a>
+                                            <form action="{{ url('agenda/' . $item->id) }}" method="POST" onsubmit="return confirm('Apakah Anda yakin ingin menghapus data ini?');">
+                                                @csrf
+                                                @method('DELETE')
+                                                <button type="submit" class="bg-red-500 text-white py-1 px-3 rounded hover:bg-red-600 transition duration-200">Delete</button>
+                                            </form>
+                                        @endif
+                                    </div>
                                 </td>
                             @endif
                             </tr>

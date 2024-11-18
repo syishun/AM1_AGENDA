@@ -10,6 +10,7 @@ use App\Models\Kelas;
 use App\Models\User;
 use App\Notifications\YourCustomNotification;
 use App\Events\AbsenGuruSaved;
+use DB;
 
 class Absen_guruController extends Controller
 {
@@ -27,21 +28,28 @@ class Absen_guruController extends Controller
     {
         $kelas = Kelas::find($id);
 
-        // Retrieve the user's role
         $userRole = auth()->user()->role;
 
         // Set the title based on the user's role
         $title = ($userRole === 'Guru' || $userRole === 'Admin') ? 'Absensi' : 'Tugas';
 
-        // Check for date filter or default to today's date
         $filterDate = $request->query('date') ?? Carbon::today()->toDateString();
 
-        // Fetch attendance records for the class, filtering by date and ordering by the latest date
-        $absenGuruQuery = Absen_guru::where('kelas_id', $id)
-            ->whereDate('tgl', $filterDate)
-            ->orderBy('tgl', 'desc');
+        $absenGuruQuery = Absen_guru::where('kelas_id', $id)->orderBy('tgl', 'desc');
 
-        // Removed condition that filters mapel by kode_guru, so all subjects are shown
+        if ($filterDate) {
+            $absenGuruQuery->whereDate('tgl', $filterDate);
+        }
+
+        if (auth()->user()->role === 'Guru') {
+            $kode_guru = auth()->user()->kode_guru;
+            $assignedMapels = DB::table('guru_mapel')
+                ->where('data_guru_id', $kode_guru)
+                ->pluck('mapel_id');
+
+            $absenGuruQuery->whereIn('mapel_id', $assignedMapels);
+        }
+
         $absen_guru = $absenGuruQuery->get();
 
         return view('guru.absen_guru.absen_guru_kelas.index', compact('absen_guru', 'kelas', 'filterDate'), ['title' => $title . ' di Kelas ' . $kelas->kelas . ' ' . $kelas->jurusan->jurusan_id . ' ' . $kelas->kelas_id]);
@@ -52,10 +60,20 @@ class Absen_guruController extends Controller
      */
     public function create($kelas_id)
     {
-        // Get all subjects without filtering by teacher's kode_guru
-        $mapel = Mapel::all();
+        $kode_guru = auth()->user()->kode_guru;
+        $assignedMapels = DB::table('guru_mapel')
+            ->where('data_guru_id', $kode_guru)
+            ->pluck('mapel_id');
+
+        // Retrieve subjects based on the IDs from `guru_mapel`
+        $mapel = Mapel::whereIn('id', $assignedMapels)->get();
+
         $kelas = Kelas::findOrFail($kelas_id);
-        return view('guru.absen_guru.absen_guru_kelas.create', compact('mapel', 'kelas_id'), ['title' => 'Tambah Absensi di Kelas ' . $kelas->kelas . ' ' . $kelas->jurusan->jurusan_id . ' ' . $kelas->kelas_id]);
+
+        return view('guru.absen_guru.absen_guru_kelas.create', [
+            'kelas_id' => $kelas_id,
+            'mapel' => $mapel
+        ], ['title' => 'Tambah Absensi Harian Kelas ' . $kelas->kelas . ' ' . $kelas->jurusan->jurusan_id . ' ' . $kelas->kelas_id]);
     }
 
     /**
@@ -63,20 +81,26 @@ class Absen_guruController extends Controller
      */
     public function store(Request $request)
     {
-        // Validasi form input
         $request->validate([
-            'nama_mapel' => 'required',
-            'tgl' => ['required', function ($attribute, $value, $fail) {
-                if ($value !== Carbon::today()->toDateString()) {
-                    $fail('Tanggal harus diisi dengan tanggal hari ini.');
-                }
-            }],
+            'mapel_id' => 'required',
+            'tgl' => [
+                'required',
+                function ($attribute, $value, $fail) {
+                    $date = Carbon::parse($value);
+                    if ($date->dayOfWeek == Carbon::SATURDAY || $date->dayOfWeek == Carbon::SUNDAY) {
+                        $fail('Tidak dapat menambahkan data pada hari Sabtu atau Minggu.');
+                    }
+                    if ($value !== Carbon::today()->toDateString()) {
+                        $fail('Tanggal harus diisi dengan tanggal hari ini.');
+                    }
+                },
+            ],
             'keterangan' => 'required',
-            'tugas.*' => 'nullable|mimes:pdf|max:15360', // Validasi untuk setiap file tugas
+            'tugas.*' => 'nullable|mimes:pdf|max:15360',
         ]);
 
         $absen_guru = new Absen_guru;
-        $absen_guru->nama_mapel = $request->nama_mapel;
+        $absen_guru->mapel_id = $request->mapel_id;
         $absen_guru->tgl = $request->tgl;
         $absen_guru->kelas_id = $request->kelas_id;
         $absen_guru->keterangan = $request->keterangan;
@@ -129,10 +153,19 @@ class Absen_guruController extends Controller
     public function edit(string $id)
     {
         $absen_guru = Absen_guru::findOrFail($id);
-        $mapel = Mapel::all();
+        $kode_guru = auth()->user()->kode_guru;
+        $assignedMapels = DB::table('guru_mapel')
+            ->where('data_guru_id', $kode_guru)
+            ->pluck('mapel_id');
+
+        // Retrieve subjects based on the IDs from `guru_mapel`
+        $mapel = Mapel::whereIn('id', $assignedMapels)->get();
         $kelas = Kelas::findOrFail($absen_guru->kelas_id);
-        $kelas_id =  $kelas->id;
-        return view('guru.absen_guru.absen_guru_kelas.edit', compact('absen_guru', 'mapel', 'kelas_id'), ['title' => 'Edit Absensi di Kelas ' . $kelas->kelas . ' ' . $kelas->jurusan->jurusan_id . ' ' . $kelas->kelas_id]);
+        $kelas_id = $kelas->id;
+
+        return view('guru.absen_guru.absen_guru_kelas.edit', compact('absen_guru', 'kelas_id', 'mapel'), [
+            'title' => 'Edit Agenda Harian Kelas ' . $kelas->kelas . ' ' . $kelas->jurusan->jurusan_id . ' ' . $kelas->kelas_id
+        ]);
     }
 
     /**
@@ -141,14 +174,14 @@ class Absen_guruController extends Controller
     public function update(Request $request, string $id)
     {
         $request->validate([
-            'nama_mapel' => 'required',
+            'mapel_id' => 'required',
             'keterangan' => 'required',
             'tugas.*' => 'nullable|mimes:pdf|max:15360', // Validasi untuk multiple files
         ]);
 
         $absen_guru = Absen_guru::findOrFail($id);
 
-        $absen_guru->nama_mapel = $request->nama_mapel;
+        $absen_guru->mapel_id = $request->mapel_id;
         // $absen_guru->tgl = $request->tgl;
         $absen_guru->kelas_id = $request->kelas_id;
         $absen_guru->keterangan = $request->keterangan;

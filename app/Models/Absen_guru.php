@@ -11,25 +11,29 @@ class Absen_guru extends Model
 
     protected $table = 'absen_gurus';
 
-    // Model Mapel.php
-    public function data_guru()
+    public function dataGurus()
     {
-        return $this->belongsTo(Data_guru::class, 'kode_guru', 'kode_guru');
+        return $this->belongsToMany(Data_guru::class, 'guru_mapel', 'mapel_id', 'data_guru_id');
+    }
+
+    public function mapels()
+    {
+        return $this->belongsToMany(Mapel::class, 'guru_mapel', 'data_guru_id', 'mapel_id');
     }
 
     public function mapel()
     {
-        return $this->belongsTo('App\Models\Mapel', 'nama_mapel', 'id');
+        return $this->belongsTo(Mapel::class, 'mapel_id', 'id');
     }
 
     public function kelas()
     {
-        return $this->belongsTo('App\Models\Kelas', 'kelas_id', 'id');
+        return $this->belongsTo(Kelas::class, 'kelas_id', 'id');
     }
 
     protected $fillable = [
         'kode_guru',
-        'nama_mapel',
+        'mapel_id',
         'tgl',
         'kelas_id',
         'keterangan',

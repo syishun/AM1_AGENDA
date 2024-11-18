@@ -57,7 +57,7 @@
                 <button type="submit" class="bg-green-500 text-white py-2 px-4 rounded hover:bg-green-600 transition duration-200">Update</button>
             </div>
         </form>
-    @elseif (Auth::user()->role == 'Sekretaris')
-    <p class="text-center mt-4">Anda tidak memiliki hak untuk mengakses halaman ini.</p>
+    @elseif (Auth::user()->role == 'Sekretaris' || Auth::user()->role == 'Guru')
+        <p class="text-center mt-4">Anda tidak memiliki hak untuk mengakses halaman ini.</p>
     @endif
 </x-layout>

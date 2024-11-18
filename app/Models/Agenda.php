@@ -30,4 +30,9 @@ class Agenda extends Model
     {
         return $this->belongsToMany(Mapel::class, 'guru_mapel', 'data_guru_id', 'mapel_id');
     }
+
+    public function data_guru()
+    {
+        return $this->belongsTo(Data_guru::class, 'kode_guru', 'kode_guru');
+    }
 }

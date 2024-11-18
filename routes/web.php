@@ -62,9 +62,6 @@ Route::middleware(['auth', 'role:Guru,Admin'])->group(function () {
 
 Route::middleware(['auth', 'role:Guru,Admin,Sekretaris'])->group(function () {
     Route::get('absen_guru/kelas/{id}', [Absen_guruController::class, 'absen_guruByClass']);
-});
-
-Route::middleware(['auth', 'role:Admin,Sekretaris'])->group(function () {
     Route::resource('absen_siswa', Absen_siswaController::class);
 });
 

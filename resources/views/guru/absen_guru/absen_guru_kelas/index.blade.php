@@ -34,9 +34,6 @@
                     <thead class="sticky top-0 bg-green-500 text-white">
                         <tr class="text-center">
                             <th class="px-4 py-2">No</th>
-                            @if(in_array(Auth::user()->role, ['Admin', 'Sekretaris']))
-                            <th class="px-4 py-2">Nama Guru</th>
-                            @endif
                             <th class="px-4 py-2">Mapel</th>
                             <th class="px-4 py-2">Keterangan</th>
                             <th class="px-4 py-2">Indikator Kompetensi</th>
@@ -52,9 +49,6 @@
                         @foreach ($absensiItems as $item)
                             <tr class="text-center border-t border-gray-200 hover:bg-gray-100">
                                 <td class="px-4 py-2">{{ $loop->iteration }}</td>
-                                @if(in_array(Auth::user()->role, ['Admin', 'Sekretaris']))
-                                <td class="px-4 py-2">{{ $item->mapel->data_guru->nama_guru }}</td>
-                                @endif
                                 <td class="px-4 py-2">{{ $item->mapel->nama_mapel }}</td>
                                 <td class="px-4 py-2">{{ $item->keterangan }}</td>
                                 <td class="px-4 py-2">

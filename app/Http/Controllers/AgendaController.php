@@ -23,16 +23,26 @@ class AgendaController extends Controller
 
     public function agendaByClass(Request $request, $id)
     {
-        $kelas = Kelas::find($id);
+        $kelas = Kelas::findOrFail($id);
         $filterDate = $request->query('date') ?? Carbon::today()->toDateString();
 
-        // Retrieve agenda items for the specified class and date without filtering by teacher
         $agendaQuery = Agenda::where('kelas_id', $id)->orderBy('tgl', 'desc');
+
+        // Filter berdasarkan tanggal jika diperlukan
         if ($filterDate) {
             $agendaQuery->whereDate('tgl', $filterDate);
         }
 
-        // Removed the condition that filters subjects based on the logged-in teacher
+        // Jika user adalah Guru, terapkan filter berdasarkan `kode_guru`
+        if (auth()->user()->role === 'Guru') {
+            $kode_guru = auth()->user()->kode_guru;
+            $assignedMapels = DB::table('guru_mapel')
+                ->where('data_guru_id', $kode_guru)
+                ->pluck('mapel_id');
+
+            $agendaQuery->whereIn('mapel_id', $assignedMapels);
+        }
+
         $agenda = $agendaQuery->get();
 
         return view('guru.agenda.agenda_kelas.index', compact('agenda', 'kelas', 'filterDate'), [
@@ -65,11 +75,18 @@ class AgendaController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'tgl' => ['required', function ($attribute, $value, $fail) {
-                if ($value !== Carbon::today()->toDateString()) {
-                    $fail('Tanggal harus diisi dengan tanggal hari ini.');
-                }
-            }],
+            'tgl' => [
+                'required',
+                function ($attribute, $value, $fail) {
+                    $date = Carbon::parse($value);
+                    if ($date->dayOfWeek == Carbon::SATURDAY || $date->dayOfWeek == Carbon::SUNDAY) {
+                        $fail('Tidak dapat menambahkan data pada hari Sabtu atau Minggu.');
+                    }
+                    if ($value !== Carbon::today()->toDateString()) {
+                        $fail('Tanggal harus diisi dengan tanggal hari ini.');
+                    }
+                },
+            ],
             'mapel_id' => 'required',
             'aktivitas' => 'required',
             'jam_msk' => 'required',
@@ -78,7 +95,7 @@ class AgendaController extends Controller
 
         $add = new Agenda;
         $add->tgl = $request->tgl;
-        $add->kelas_id = $request->kelas_id; // Kelas akan disimpan langsung dari parameter request
+        $add->kelas_id = $request->kelas_id;
         $add->mapel_id = $request->mapel_id;
         $add->aktivitas = $request->aktivitas;
         $add->jam_msk = $request->jam_msk;

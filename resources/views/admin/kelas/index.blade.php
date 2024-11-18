@@ -22,13 +22,15 @@
                         <td class="py-3 px-6">{{ $loop->iteration }}</td>
                         <td class="py-3 px-6">{{ $item->kelas }} {{ $item->jurusan->jurusan_id }} {{ $item->kelas_id }}</td>
                         <td class="py-3 px-6">{{ $item->thn_ajaran }}</td>
-                        <td class="py-3 px-6 flex justify-center space-x-2">
-                            <a href="{{ url('kelas/' . $item->id . '/edit') }}" class="bg-yellow-500 text-white py-1 px-3 rounded hover:bg-yellow-600 transition duration-200">Edit</a>
-                            <form action="{{ url('kelas/' . $item->id) }}" method="POST" onsubmit="return confirm('Apakah Anda yakin ingin menghapus data ini?');">
-                                @csrf
-                                @method('DELETE')
-                                <button type="submit" class="bg-red-500 text-white py-1 px-3 rounded hover:bg-red-600 transition duration-200">Delete</button>
-                            </form>
+                        <td class="px-4 py-2 text-center">
+                            <div class="flex justify-center items-center space-x-2">
+                                <a href="{{ url('kelas/' . $item->id . '/edit') }}" class="bg-yellow-500 text-white py-1 px-3 rounded hover:bg-yellow-600 transition duration-200">Edit</a>
+                                <form action="{{ url('kelas/' . $item->id) }}" method="POST" onsubmit="return confirm('Apakah Anda yakin ingin menghapus data ini?');">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button type="submit" class="bg-red-500 text-white py-1 px-3 rounded hover:bg-red-600 transition duration-200">Delete</button>
+                                </form>
+                            </div>
                         </td>
                     </tr>
                     @endforeach

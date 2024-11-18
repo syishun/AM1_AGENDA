@@ -74,7 +74,7 @@
             }
         }
     </script>
-    @elseif (Auth::user()->role == 'Admin')
-    <p class="text-center mt-4">Anda tidak memiliki hak untuk mengakses halaman ini.</p>
+    @elseif (Auth::user()->role == 'Admin' || Auth::user()->role == 'Guru')
+        <p class="text-center mt-4">Anda tidak memiliki hak untuk mengakses halaman ini.</p>
     @endif
 </x-layout>

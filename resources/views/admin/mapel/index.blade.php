@@ -4,7 +4,7 @@
     <div class="flex flex-col md:flex-row md:justify-between items-center mb-6 p-4 rounded-lg">
         <!-- Form Pencarian Mapel -->
         <form action="{{ url('mapel') }}" method="GET" class="flex flex-col md:flex-row md:space-x-4 w-full md:w-auto mb-4 md:mb-0">
-            <input type="text" name="search" value="{{ request('search') }}" placeholder="Cari mapel atau guru..." class="py-2 px-4 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-green-500 transition duration-200">
+            <input type="search" name="search" value="{{ request('search') }}" placeholder="Cari mapel atau guru..." class="py-2 px-4 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-green-500 transition duration-200">
             <button type="submit" class="bg-green-500 hover:bg-green-600 text-white py-2 px-4 rounded mt-2 md:mt-0 transition duration-200">Cari</button>
         </form>
 
@@ -39,13 +39,15 @@
                                 {{ $guru->kode_guru }}{{ !$loop->last ? ',' : '' }}<br>
                             @endforeach
                         </td>
-                        <td class="py-3 px-6 flex justify-center space-x-2">
-                            <a href="{{ url('mapel/' . $item->id . '/edit') }}" class="bg-yellow-500 text-white py-1 px-3 rounded hover:bg-yellow-600 transition duration-200">Edit</a>
-                            <form action="{{ url('mapel/' . $item->id) }}" method="POST" onsubmit="return confirm('Apakah Anda yakin ingin menghapus data ini?');">
-                                @csrf
-                                @method('DELETE')
-                                <button type="submit" class="bg-red-500 text-white py-1 px-3 rounded hover:bg-red-600 transition duration-200">Delete</button>
-                            </form>
+                        <td class="px-4 py-2 text-center">
+                            <div class="flex justify-center items-center space-x-2">
+                                <a href="{{ url('mapel/' . $item->id . '/edit') }}" class="bg-yellow-500 text-white py-1 px-3 rounded hover:bg-yellow-600 transition duration-200">Edit</a>
+                                <form action="{{ url('mapel/' . $item->id) }}" method="POST" onsubmit="return confirm('Apakah Anda yakin ingin menghapus data ini?');">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button type="submit" class="bg-red-500 text-white py-1 px-3 rounded hover:bg-red-600 transition duration-200">Delete</button>
+                                </form>
+                            </div>
                         </td>
                     </tr>
                     @endforeach

@@ -11,17 +11,17 @@
 
                 <!-- Mapel -->
                 <div class="form-group">
-                    <label for="nama_mapel" class="block text-sm font-medium text-gray-700">Mapel</label>
-                    <select class="mt-1 block w-full h-10 bg-gray-200 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-green-500 sm:text-sm @error('nama_mapel') border-red-500 @enderror" name="nama_mapel" id="nama_mapel" style="padding-left: 10px">
+                    <label for="mapel_id" class="block text-sm font-medium text-gray-700">Mata Pelajaran</label>
+                    <select id="mapel_id" name="mapel_id" class="mt-1 block w-full h-10 bg-gray-200 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-green-500 sm:text-sm">
                         <option value="">--Pilih--</option>
-                        @foreach ($mapel as $item)
+                        @foreach($mapel as $item)
                             <option value="{{ $item->id }}">{{ $item->nama_mapel }}</option>
                         @endforeach
                     </select>
-                    @error('nama_mapel')
+                    @error('mapel_id')
                         <p class="mt-2 text-sm text-red-600">{{ $message }}</p>
                     @enderror
-                </div>    
+                </div>     
 
                 <!-- Tanggal -->
                 <div class="form-group">

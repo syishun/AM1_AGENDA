@@ -19,39 +19,28 @@ class Absen_siswaController extends Controller
     {
         $user = Auth::user();
         $search = $request->get('search');
-        // Ambil tanggal dari filter atau gunakan tanggal hari ini
         $filterDate = $request->get('date') ?? Carbon::today()->format('Y-m-d');
         $searchMessage = null;
 
-        if ($user->role == 'Perwakilan Kelas') {
+        // Sekretaris: hanya cari siswa di kelas mereka
+        if ($user->role == 'Sekretaris') {
             $kelasId = $user->kelas_id;
             $kelas = Kelas::findOrFail($kelasId);
-            $title = 'Absensi Siswa Kelas ' . $kelas->kelas_id;
+            $title = 'Absensi Siswa Kelas ' . $kelas->kelas . ' ' . $kelas->jurusan->jurusan_id . ' ' . $kelas->kelas_id;
 
-            if ($search) {
-                $data_siswa = Data_siswa::where('kelas_id', $kelasId)
-                    ->where('nama_siswa', 'LIKE', "%{$search}%")
-                    ->pluck('id');
+            $data_siswa = Data_siswa::where('kelas_id', $kelasId)
+                ->when($search, function ($query) use ($search) {
+                    $query->where('nama_siswa', 'LIKE', "%{$search}%")
+                        ->orWhere('kelas_id', 'LIKE', "%{$search}%");
+                })
+                ->pluck('id');
 
-                if ($data_siswa->isEmpty()) {
-                    $searchMessage = 'Siswa tidak berada di kelas ini.';
-                    return view('siswa.absen_siswa.index', compact('title', 'searchMessage'))->with('absen_siswa', collect());
-                }
-
-                $absen_siswa = Absen_siswa::with('data_siswa')
-                    ->whereIn('nis_id', $data_siswa)
-                    ->whereDate('tgl', $filterDate)
-                    ->orderBy('tgl', 'desc')
-                    ->get()
-                    ->groupBy('tgl');
-
-                if ($absen_siswa->isEmpty()) $searchMessage = 'Siswa ini belum pernah absen.';
-
-                return view('siswa.absen_siswa.index', compact('absen_siswa', 'title', 'searchMessage', 'filterDate', 'search'));
+            if ($data_siswa->isEmpty() && $search) {
+                $searchMessage = 'Siswa tidak ditemukan.';
             }
 
             $absen_siswa = Absen_siswa::with('data_siswa')
-                ->whereHas('data_siswa', fn($query) => $query->where('kelas_id', $kelasId))
+                ->whereIn('nis_id', $data_siswa)
                 ->whereDate('tgl', $filterDate)
                 ->orderBy('tgl', 'desc')
                 ->get()
@@ -60,10 +49,24 @@ class Absen_siswaController extends Controller
             return view('siswa.absen_siswa.index', compact('absen_siswa', 'title', 'searchMessage', 'filterDate', 'search'));
         }
 
-        $absen_siswa = Absen_siswa::with(['data_siswa', 'kelas'])
+        // Admin atau Guru: pencarian kelas gabungan
+        $absen_siswa = Absen_siswa::with(['data_siswa', 'kelas.jurusan'])
             ->when($search, function ($query) use ($search) {
-                $query->whereHas('data_siswa', fn($query) => $query->where('nama_siswa', 'LIKE', "%{$search}%"))
-                    ->orWhereHas('kelas', fn($query) => $query->where('kelas_id', 'LIKE', "%{$search}%"));
+                // Pecah input pencarian ke dalam beberapa kata
+                $keywords = explode(' ', $search);
+
+                $query->whereHas('data_siswa', function ($query) use ($search) {
+                    $query->where('nama_siswa', 'LIKE', "%{$search}%");
+                })
+                    ->orWhereHas('kelas', function ($query) use ($keywords) {
+                        $query->where(function ($query) use ($keywords) {
+                            foreach ($keywords as $keyword) {
+                                $query->orWhere('kelas', '=', strtoupper($keyword)) // Pencocokan eksak untuk kelas (X, XI, XII)
+                                    ->orWhere('kelas_id', 'LIKE', "%{$keyword}%") // Tetap menggunakan LIKE untuk kelas_id
+                                    ->orWhereHas('jurusan', fn($query) => $query->where('jurusan_id', 'LIKE', "%{$keyword}%")); // LIKE untuk jurusan
+                            }
+                        });
+                    });
             })
             ->whereDate('tgl', $filterDate)
             ->orderBy('tgl', 'desc')
@@ -99,7 +102,12 @@ class Absen_siswaController extends Controller
     public function store(Request $request)
     {
         // Dapatkan tanggal hari ini
-        $today = Carbon::today()->toDateString();
+        $today = Carbon::today();
+
+        // Periksa apakah hari ini adalah Sabtu atau Minggu
+        if ($today->isWeekend()) {
+            return redirect()->back()->withErrors(['tgl' => 'Data tidak dapat ditambahkan pada hari Sabtu atau Minggu.']);
+        }
 
         // Validasi input
         $request->validate([
@@ -107,7 +115,7 @@ class Absen_siswaController extends Controller
                 'required',
                 'date',
                 function ($attribute, $value, $fail) use ($today) {
-                    if ($value !== $today) {
+                    if ($value !== $today->toDateString()) {
                         $fail('Tanggal hanya boleh diisi dengan hari ini.');
                     }
                 },

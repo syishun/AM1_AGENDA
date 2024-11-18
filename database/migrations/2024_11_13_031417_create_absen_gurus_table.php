@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('absen_gurus', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('nama_mapel')->constrained('mapels')->onDelete('cascade')->onUpdate('cascade');
+            $table->foreignId('mapel_id')->constrained('mapels')->onDelete('cascade')->onUpdate('cascade');
             $table->date('tgl');
             $table->foreignId('kelas_id')->constrained('kelas')->onDelete('cascade')->onUpdate('cascade');
             $table->string('keterangan');

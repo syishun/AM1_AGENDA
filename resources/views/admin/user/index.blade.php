@@ -4,7 +4,7 @@
     <div class="flex flex-col md:flex-row md:justify-between items-center mb-6 p-4 rounded-lg">
         <!-- Form Pencarian -->
         <form action="{{ url('user') }}" method="GET" id="filterForm" class="flex flex-col md:flex-row md:space-x-4 w-full md:w-auto mb-4 md:mb-0">
-            <input type="text" name="search" value="{{ request('search') }}" placeholder="Cari username..." class="py-2 px-4 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-green-500 transition duration-200">
+            <input type="search" name="search" value="{{ request('search') }}" placeholder="Cari username..." class="py-2 px-4 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-green-500 transition duration-200">
             <select name="filterRole" id="filterRole" onchange="document.getElementById('filterForm').submit();" class="py-2 px-4 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-green-500 transition duration-200 mt-2 md:mt-0">
                 <option value="">Role</option>
                 <option value="Admin" {{ request('filterRole') == 'Admin' ? 'selected' : '' }}>Admin</option>
@@ -54,13 +54,15 @@
                                 -
                             @endif
                         </td>
-                        <td class="py-3 px-6 flex justify-center space-x-2">
-                            <a href="{{ url('user/' . $item['id'] . '/edit') }}" class="bg-yellow-500 text-white py-1 px-3 rounded hover:bg-yellow-600 transition duration-200">Edit</a>
-                            <form action="{{ url('user/' . $item['id']) }}" method="POST" onsubmit="return confirm('Apakah Anda yakin ingin menghapus data ini?');">
-                                @csrf
-                                @method('DELETE')
-                                <button type="submit" class="bg-red-500 text-white py-1 px-3 rounded hover:bg-red-600 transition duration-200">Delete</button>
-                            </form>
+                        <td class="px-4 py-2 text-center">
+                            <div class="flex justify-center items-center space-x-2">
+                                <a href="{{ url('user/' . $item['id'] . '/edit') }}" class="bg-yellow-500 text-white py-1 px-3 rounded hover:bg-yellow-600 transition duration-200">Edit</a>
+                                <form action="{{ url('user/' . $item['id']) }}" method="POST" onsubmit="return confirm('Apakah Anda yakin ingin menghapus data ini?');">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button type="submit" class="bg-red-500 text-white py-1 px-3 rounded hover:bg-red-600 transition duration-200">Delete</button>
+                                </form>
+                            </div>
                         </td>
                     </tr>
                     @endforeach
