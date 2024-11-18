@@ -1,6 +1,20 @@
 <x-layout>
     <x-slot:title>{{$title}}</x-slot:title>
 
+    @if(auth()->user()->role === 'Admin')
+            <div class="flex justify-end mb-4">
+                <a href="{{ url()->current() }}" 
+                class="px-4 py-2 rounded transition 
+                        {{ request()->query('show_all') ? 'bg-gray-300 text-gray-800 hover:bg-gray-400' : 'bg-green-500 text-white hover:bg-green-600' }}">
+                    Tahun Ajaran Sekarang
+                </a>
+                <a href="{{ url()->current() }}?show_all=true" 
+                class="ml-2 px-4 py-2 rounded transition 
+                        {{ request()->query('show_all') ? 'bg-green-500 text-white hover:bg-green-600' : 'bg-gray-300 text-gray-800 hover:bg-gray-400' }}">
+                    Semua Tahun Ajaran
+                </a>
+            </div>        
+        @endif
     @if($kelas->isEmpty())
         <p class="text-center mt-4">Petugas belum menambahkan kelas.</p>
     @else

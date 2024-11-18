@@ -44,7 +44,20 @@ class Data_siswaController extends Controller
     public function create()
     {
         $data_siswa = Data_siswa::all();
-        $kelas = Kelas::orderByRaw("FIELD(kelas, 'X', 'XI', 'XII')")
+
+        // Hitung tahun ajaran berdasarkan bulan sekarang
+        $currentMonth = date('m');
+        $currentYear = date('Y');
+
+        if ($currentMonth >= 7) {
+            $currentAcademicYear = $currentYear . '/' . ($currentYear + 1);
+        } else {
+            $currentAcademicYear = ($currentYear - 1) . '/' . $currentYear;
+        }
+
+        // Ambil data kelas untuk tahun ajaran sekarang
+        $kelas = Kelas::where('thn_ajaran', $currentAcademicYear)
+            ->orderByRaw("FIELD(kelas, 'X', 'XI', 'XII')")
             ->orderBy('kelas_id', 'asc')
             ->get();
 
@@ -97,11 +110,24 @@ class Data_siswaController extends Controller
     public function edit(string $id)
     {
         $data_siswa = Data_siswa::findOrFail($id);
-        $kelas = Kelas::orderByRaw("FIELD(kelas, 'X', 'XI', 'XII')")
+
+        // Hitung tahun ajaran berdasarkan bulan sekarang
+        $currentMonth = date('m');
+        $currentYear = date('Y');
+
+        if ($currentMonth >= 7) {
+            $currentAcademicYear = $currentYear . '/' . ($currentYear + 1);
+        } else {
+            $currentAcademicYear = ($currentYear - 1) . '/' . $currentYear;
+        }
+
+        // Ambil data kelas untuk tahun ajaran sekarang
+        $kelas = Kelas::where('thn_ajaran', $currentAcademicYear)
+            ->orderByRaw("FIELD(kelas, 'X', 'XI', 'XII')")
             ->orderBy('kelas_id', 'asc')
             ->get();
 
-        return view('admin.data_siswa.edit', compact('data_siswa', 'kelas'),  ['title' => 'Edit Data Siswa']);
+        return view('admin.data_siswa.edit', compact('data_siswa', 'kelas'), ['title' => 'Edit Data Siswa']);
     }
 
     /**

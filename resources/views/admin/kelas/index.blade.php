@@ -1,10 +1,20 @@
 <x-layout>
     <x-slot:title>{{$title}}</x-slot:title>
 
-    <a href="{{ url('kelas/create?jurusan=' . $jurusan->id) }}" class="bg-green-500 text-white py-2 px-4 rounded hover:bg-green-600 transition duration-200">Tambah Kelas di Jurusan Ini</a>
+    <div class="flex flex-col md:flex-row md:justify-between items-center mb-6 p-4 rounded-lg">
+        <!-- Form Search -->
+        <form action="{{ url('jurusan/' . $jurusan->id . '/kelas') }}" method="GET" class="mt-4">
+            <input type="search" name="search" value="{{ $search }}" placeholder="Cari Tahun Ajaran"
+                class="py-2 px-4 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-green-500 transition duration-200" />
+            <button type="submit" class="bg-green-500 hover:bg-green-600 text-white py-2 px-4 rounded mt-2 md:mt-0 transition duration-200">Cari</button>
+        </form>
+        <a href="{{ url('kelas/create?jurusan=' . $jurusan->id) }}" class="bg-green-500 text-white py-2 px-4 rounded hover:bg-green-600 transition duration-200">
+            Tambah Kelas di Jurusan Ini
+        </a>
+    </div>
 
     @if($kelas->isEmpty())
-        <p class="text-center mt-4">Data kelas belum ditambahkan.</p>
+        <p class="text-center mt-4">Data kelas belum ditemukan.</p>
     @else
         <div class="overflow-x-auto mt-4">
             <table class="min-w-full bg-white border border-gray-300 rounded-lg shadow-md">

@@ -10,7 +10,7 @@
                 @csrf
 
                 <div>
-                    <label for="jurusan_id" class="block text-sm font-medium text-gray-700">Nama Jurusan (singkatan)</label>
+                    <label for="jurusan_id" class="block text-sm font-medium text-gray-700">Nama Jurusan <i>(singkatan)</i></label>
                     <input type="text" class="mt-1 block w-full h-10 bg-gray-200 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-green-500 sm:text-sm @error('jurusan_id') border-red-500 @enderror" id="jurusan_id" name="jurusan_id" value="{{ old('jurusan_id', $jurusan->jurusan_id) }}" style="padding-left: 10px;">
                     @error('jurusan_id')
                         <p class="mt-2 text-sm text-red-600">{{ $message }}</p>

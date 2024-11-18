@@ -17,11 +17,36 @@ class Absen_guruController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        $absen_guru = Absen_guru::all();
-        $kelas = Kelas::all();
-        return view('guru.absen_guru.index', compact('absen_guru', 'kelas'), ['title' => 'Absensi Guru']);
+        $currentMonth = now()->month;
+        $currentYear = now()->year;
+
+        // Tentukan awal dan akhir tahun ajaran
+        if ($currentMonth >= 7) { // Juli hingga Desember
+            $startYear = $currentYear;
+            $endYear = $currentYear + 1;
+        } else { // Januari hingga Juni
+            $startYear = $currentYear - 1;
+            $endYear = $currentYear;
+        }
+
+        $currentAcademicYear = "$startYear/$endYear";
+
+        // Periksa apakah admin ingin melihat semua data
+        $showAll = $request->query('show_all', false);
+
+        if (auth()->user()->role === 'Admin' && $showAll) {
+            // Admin dapat melihat semua data
+            $kelas = Kelas::with('jurusan')->get();
+        } else {
+            // Guru atau admin default melihat data tahun ajaran berjalan
+            $kelas = Kelas::with('jurusan')
+                ->where('thn_ajaran', $currentAcademicYear)
+                ->get();
+        }
+
+        return view('guru.absen_guru.index', compact('kelas'), ['title' => 'Daftar Kelas']);
     }
 
     public function absen_guruByClass(Request $request, $id)

@@ -31,17 +31,17 @@
                 </div>
 
                 <div>
-                    <label for="thn_ajaran" class="block text-sm font-medium text-gray-700">thn_ajaran</label>
-                    <input type="text" class="mt-1 block w-full h-10 bg-gray-200 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-green-500 sm:text-sm @error('thn_ajaran') border-red-500 @enderror" id="thn_ajaran" name="thn_ajaran" value="{{ old('thn_ajaran', $kelas->thn_ajaran) }}" style="padding-left: 10px;">
-                    @error('thn_ajaran')
+                    <label for="kelas_id" class="block text-sm font-medium text-gray-700">No Kelas</label>
+                    <input type="text" class="mt-1 block w-full h-10 bg-gray-200 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-green-500 sm:text-sm @error('kelas_id') border-red-500 @enderror" id="kelas_id" name="kelas_id" value="{{ old('kelas_id', $kelas->kelas_id) }}" style="padding-left: 10px;">
+                    @error('kelas_id')
                         <p class="mt-2 text-sm text-red-600">{{ $message }}</p>
                     @enderror
                 </div>
 
                 <div>
-                    <label for="kelas_id" class="block text-sm font-medium text-gray-700">ID Kelas</label>
-                    <input type="text" class="mt-1 block w-full h-10 bg-gray-200 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-green-500 sm:text-sm @error('kelas_id') border-red-500 @enderror" id="kelas_id" name="kelas_id" value="{{ old('kelas_id', $kelas->kelas_id) }}" style="padding-left: 10px;">
-                    @error('kelas_id')
+                    <label for="thn_ajaran" class="block text-sm font-medium text-gray-700">Tahun Ajaran <i>*2024/2025</i></label>
+                    <input type="text" class="mt-1 block w-full h-10 bg-gray-200 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-green-500 sm:text-sm @error('thn_ajaran') border-red-500 @enderror" id="thn_ajaran" name="thn_ajaran" value="{{ old('thn_ajaran', $kelas->thn_ajaran) }}" style="padding-left: 10px;">
+                    @error('thn_ajaran')
                         <p class="mt-2 text-sm text-red-600">{{ $message }}</p>
                     @enderror
                 </div>

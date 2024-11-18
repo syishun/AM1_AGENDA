@@ -28,18 +28,24 @@ class KelasController extends Controller
     //     return view('admin.kelas.index', compact('kelas', 'jurusan'), ['title' => 'Data Kelas & Jurusan']);
     // }
 
-    public function kelasByJurusan($id)
+    public function kelasByJurusan($id, Request $request)
     {
         $jurusan = Jurusan::findOrFail($id);
 
-        // Urutkan berdasarkan kelas ('X', 'XI', 'XII') dan kelas_id dari kecil ke besar
+        // Ambil nilai pencarian dari request
+        $search = $request->input('search');
+
+        // Query untuk data kelas
         $kelas = Kelas::where('jurusan_id', $id)
             ->with('jurusan')
+            ->when($search, function ($query, $search) {
+                return $query->where('thn_ajaran', 'like', '%' . $search . '%'); // Filter berdasarkan tahun ajaran
+            })
             ->orderByRaw("FIELD(kelas, 'X', 'XI', 'XII')")
             ->orderBy('kelas_id', 'asc')
             ->get();
 
-        return view('admin.kelas.index', compact('kelas', 'jurusan'))
+        return view('admin.kelas.index', compact('kelas', 'jurusan', 'search'))
             ->with('title', 'Data Kelas untuk Jurusan ' . $jurusan->jurusan_id);
     }
 

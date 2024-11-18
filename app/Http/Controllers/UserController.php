@@ -46,9 +46,22 @@ class UserController extends Controller
     public function create()
     {
         $user = User::all();
-        $kelas = Kelas::orderByRaw("FIELD(kelas, 'X', 'XI', 'XII')")
+
+        $currentMonth = date('m');
+        $currentYear = date('Y');
+
+        if ($currentMonth >= 7) {
+            $currentAcademicYear = $currentYear . '/' . ($currentYear + 1);
+        } else {
+            $currentAcademicYear = ($currentYear - 1) . '/' . $currentYear;
+        }
+
+        // Ambil data kelas untuk tahun ajaran sekarang
+        $kelas = Kelas::where('thn_ajaran', $currentAcademicYear)
+            ->orderByRaw("FIELD(kelas, 'X', 'XI', 'XII')")
             ->orderBy('kelas_id', 'asc')
             ->get();
+
         $data_guru = Data_guru::all()->sort(function ($a, $b) {
             preg_match('/(\d+)([a-z]*)/', $a->kode_guru, $matchesA);
             preg_match('/(\d+)([a-z]*)/', $b->kode_guru, $matchesB);
@@ -95,9 +108,22 @@ class UserController extends Controller
     public function edit(string $id)
     {
         $user = User::findOrFail($id);
-        $kelas = Kelas::orderByRaw("FIELD(kelas, 'X', 'XI', 'XII')")
+
+        $currentMonth = date('m');
+        $currentYear = date('Y');
+
+        if ($currentMonth >= 7) {
+            $currentAcademicYear = $currentYear . '/' . ($currentYear + 1);
+        } else {
+            $currentAcademicYear = ($currentYear - 1) . '/' . $currentYear;
+        }
+
+        // Ambil data kelas untuk tahun ajaran sekarang
+        $kelas = Kelas::where('thn_ajaran', $currentAcademicYear)
+            ->orderByRaw("FIELD(kelas, 'X', 'XI', 'XII')")
             ->orderBy('kelas_id', 'asc')
             ->get();
+
         $data_guru = Data_guru::all()->sort(function ($a, $b) {
             preg_match('/(\d+)([a-z]*)/', $a->kode_guru, $matchesA);
             preg_match('/(\d+)([a-z]*)/', $b->kode_guru, $matchesB);
